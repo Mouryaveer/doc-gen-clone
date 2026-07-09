@@ -1,0 +1,127 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,top=2.9cm,bottom=2.8cm,left=1.35cm,right=1.35cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.03}
+
+\graphicspath{{./images/}}
+\pagenumbering{gobble}
+
+\definecolor{turngold}{HTML}{E1A84A}
+\definecolor{turncharcoal}{HTML}{232323}
+\definecolor{turnbg}{HTML}{F4F4F4}
+
+% Page tone + top/bottom branded shapes.
+\AddToShipoutPictureBG*{%
+  \AtPageLowerLeft{%
+    \put(0,0){\color{turnbg}\rule{\paperwidth}{\paperheight}}%
+    \begin{tikzpicture}[remember picture,overlay]
+      \coordinate (O) at (\paperwidth,0);
+      \foreach \a/\b in {0.95/0.20,0.83/0.27,0.71/0.34,0.58/0.41,0.45/0.48,0.32/0.55} {
+        \fill[white,opacity=0.35]
+          (O) -- (\a\paperwidth,\b\paperheight) -- (\a\paperwidth+18pt,\b\paperheight) -- cycle;
+      }
+    \end{tikzpicture}
+  }%
+}
+\AddToShipoutPictureFG*{%
+  \AtPageLowerLeft{%
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[turngold] (0,\paperheight-4pt) rectangle (\paperwidth,\paperheight);
+      \fill[turncharcoal]
+        (205pt,\paperheight-4pt) --
+        (309pt,\paperheight-4pt) --
+        (285pt,\paperheight-26pt) --
+        (221pt,\paperheight-26pt) -- cycle;
+      \fill[turngold]
+        (335pt,\paperheight-4pt) --
+        (510pt,\paperheight-4pt) --
+        (487pt,\paperheight-26pt) --
+        (358pt,\paperheight-26pt) -- cycle;
+
+      \fill[turngold] (0,0) rectangle (\paperwidth,4pt);
+      \fill[turncharcoal]
+        (0,4pt) -- (34pt,4pt) -- (26pt,22pt) -- (0,22pt) -- cycle;
+      \fill[turngold]
+        (34pt,4pt) -- (178pt,4pt) -- (156pt,22pt) -- (49pt,22pt) -- cycle;
+      \fill[turncharcoal]
+        (274pt,4pt) -- (338pt,4pt) -- (319pt,22pt) -- (255pt,22pt) -- cycle;
+    \end{tikzpicture}
+  }%
+}
+
+\begin{document}
+\thispagestyle{empty}
+
+% Header
+\noindent\includegraphics[height=1.22cm]{sample_asset_0_xref_36}
+
+\vspace{1.0em}
+\noindent{\fontsize{22}{24}\selectfont\bfseries Onboarding Letter - Turn2Law}
+
+\vspace{0.35em}
+\noindent{\large Date: 10 June 2026}\\[-0.1em]
+\noindent{\large Emp ID: T2L-AI-041}
+
+\vspace{1.0em}
+\noindent{\LARGE\bfseries Rahul Verma}
+
+\vspace{0.2em}
+\noindent
+{\large has officially joined Turn2Law as a \textbf{Software Engineer Intern} as of 1 July 2026.}
+
+\vspace{0.9em}
+\noindent
+{\large As a valued member of our growing team, Rahul Verma will contribute to our mission to democratize access to justice by blending technology with human expertise.}
+
+\vspace{0.7em}
+\noindent
+{\large Our platform is an integrated legal-tech solution offering AI-powered document drafting, verified online lawyer consultancy, and intelligent legal chatbots. It includes specialized startup legal services with compliance guidance, founder agreements, etc.}
+
+\vspace{0.9em}
+\noindent{\LARGE\bfseries Position Details}
+
+\vspace{0.2em}
+\begin{itemize}[leftmargin=1.2em,itemsep=0.15em,topsep=0.2em]
+  \item \large \textbf{Role:} Software Engineer Intern
+  \item \large \textbf{Location:} EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED Block 5, DEI Innovation Hub, SRMIST, Kattankulathur, Chennai -- 603203, Tamil Nadu, India
+  \item \large \textbf{Joining Date:} 1 July 2026
+\end{itemize}
+
+\vspace{0.55em}
+\noindent
+{\large We are excited to have you as part of the Turn2Law team, and we look forward to achieving great things together.}
+
+\vspace{0.9em}
+\noindent{\large Best Regards,}
+
+\vspace{0.22em}
+\noindent\includegraphics[width=2.5cm]{2df383ea-bab3-42c5-bff0-3b02e82627a7-1_171_229_2316_191}
+
+\vspace{0.2em}
+\noindent{\large\bfseries Yash Phoghat}\\[-0.15em]
+\noindent{\large\bfseries Founder \& CEO, TURN2LAW}
+
+\vfill
+\noindent\rule{\textwidth}{1.1pt}
+
+\vspace{0.32em}
+\begin{flushright}
+\begin{tikzpicture}[baseline={(0,-0.1)}]
+  \draw[line width=0.8pt] (0,0) circle (0.15);
+  \draw[line width=0.7pt] (-0.1,0.03) rectangle (0.1,-0.09);
+  \draw[line width=0.7pt] (-0.1,0.03) -- (0,-0.03) -- (0.1,0.03);
+\end{tikzpicture}
+\hspace{0.25em}{\small\bfseries E-MAIL}\\[-0.1em]
+{\small turntwolaw@gmail.com}
+\end{flushright}
+
+\end{document}

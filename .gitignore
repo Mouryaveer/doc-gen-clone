@@ -1,7 +1,7 @@
 # ===============================
 # Python
 # ===============================
-__pycache__/
+# __pycache__/
 *.py[cod]
 *$py.class
 
@@ -20,49 +20,22 @@ env/
 # ===============================
 # Logs & Runtime Artifacts
 # ===============================
-*.log
-output.log
+# *.log
+# output.log
 
 # ===============================
-# Generated Outputs (DO NOT COMMIT)
+# Generated Outputs
 # ===============================
-output.pdf
-output.tex
-output.aux
-*.aux
-*.out
-*.toc
-*.lof
-*.lot
+# output.pdf
+# output.tex
+# output.aux
+# *.aux
+# *.out
+# *.toc
+# *.lof
+# *.lot
 
 # ===============================
-# PDFs (generated)
+# PDFs
 # ===============================
-sample.pdf
-
-# ===============================
-# Jupyter
-# ===============================
-.ipynb_checkpoints/
-
-# ===============================
-# OS / Editor Noise
-# ===============================
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# ===============================
-# Testing / Coverage
-# ===============================
-.coverage
-htmlcov/
-.pytest_cache/
-
-# ===============================
-# Build / Distribution
-# ===============================
-build/
-dist/
-*.egg-info/
+# sample.pdf

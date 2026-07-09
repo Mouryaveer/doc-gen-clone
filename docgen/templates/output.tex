@@ -1,0 +1,208 @@
+% =============================================================================
+%  Turn2Law — Onboarding Letter  (pixel-faithful reproduction)
+%  Compiler : XeLaTeX (two passes required)
+%  Paper    : 595.5 × 842.25 pt  (matches reference MediaBox exactly)
+%
+%  All coordinates derived by direct measurement from sample.pdf via PyMuPDF.
+%  textpos y-offset: +4.4pt added to all text y positions to account for
+%  the difference between PyMuPDF glyph-top bbox and LaTeX textblock top.
+% =============================================================================
+\documentclass[10pt]{article}
+
+\usepackage{fontspec}
+\setmainfont[
+  Path           = C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/,
+  UprightFont    = Montserrat-Regular-Full.ttf,
+  BoldFont       = Montserrat-Bold-Full.ttf,
+  ItalicFont     = Montserrat-Regular-Full.ttf,
+  BoldItalicFont = Montserrat-Bold-Full.ttf
+]{Montserrat}
+
+\newfontfamily\garetfont[
+  Path        = C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/,
+  UprightFont = Garet-Regular.ttf,
+  BoldFont    = Garet-Bold.ttf
+]{Garet}
+
+\usepackage[
+  paperwidth  = 595.5pt,
+  paperheight = 842.25pt,
+  top=0pt, bottom=0pt, left=0pt, right=0pt,
+  noheadfoot
+]{geometry}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1pt}
+\setlength{\TPVertModule}{1pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{1.3846}
+
+\graphicspath{{C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/images/}}
+\pagenumbering{gobble}
+
+\definecolor{refgold}{HTML}{FFBD58}
+\definecolor{refcharcoal}{HTML}{2A2A2A}
+\definecolor{refdarkgold}{HTML}{B87C20}
+
+% =============================================================================
+%  BACKGROUND LAYER
+% =============================================================================
+\AddToShipoutPictureBG*{%
+  \begin{tikzpicture}[remember picture, overlay, x=1pt, y=1pt]
+    % Watermark: pdf x0=-378.37 y0=312.83 → tikz bottom=4.98
+    \node[anchor=south west, inner sep=0pt] at
+      ($(current page.south west)+(-378.37pt,4.98pt)$)
+      {\includegraphics[width=973.87pt,height=524.44pt,keepaspectratio=false]{watermark_bg}};
+    % Bottom bar shapes
+    \fill[refgold]($(current page.south west)+(259.96pt,-44.67pt)$)rectangle($(current page.south west)+(775.39pt,7.74pt)$);
+    \fill[refcharcoal]($(current page.south west)+(-164.98pt,-18.46pt)$)rectangle($(current page.south west)+(319.6pt,16.12pt)$);
+    \fill[refgold]($(current page.south west)+(42.06pt,-18.46pt)$)rectangle($(current page.south west)+(219.98pt,43.34pt)$);
+    \fill[refdarkgold]($(current page.south west)+(22.55pt,16.13pt)$)rectangle($(current page.south west)+(61.47pt,43.34pt)$);
+    % Top bar shapes
+    \fill[refgold]($(current page.south west)+(-198.33pt,834.22pt)$)rectangle($(current page.south west)+(281.11pt,896.02pt)$);
+    \fill[refcharcoal]($(current page.south west)+(240.86pt,817.38pt)$)rectangle($(current page.south west)+(725.43pt,851.97pt)$);
+    \fill[refgold]($(current page.south west)+(340.48pt,790.15pt)$)rectangle($(current page.south west)+(518.39pt,851.95pt)$);
+    \fill[refdarkgold]($(current page.south west)+(498.99pt,790.15pt)$)rectangle($(current page.south west)+(537.9pt,817.37pt)$);
+  \end{tikzpicture}%
+}
+
+% =============================================================================
+%  DOCUMENT BODY — all positions absolute via textpos
+%  Text y-coords = PyMuPDF_bbox_y0 + 4.4pt  (ascender correction)
+%  Image y-coords = PyMuPDF_bbox_y0          (no correction — pixel placement)
+%  Path y-coords  = PyMuPDF_bbox_y0          (no correction — vector paths)
+% =============================================================================
+\begin{document}
+\thispagestyle{empty}
+
+% LOGO: pdf x0=28.49 y0=32.59, w=269.35 h=72.03 — image, no text offset
+\begin{textblock}{269.35}(28.49,32.59)
+\noindent\includegraphics[width=269.35pt,height=72.03pt,keepaspectratio=true]{sample_asset_0_xref_36}
+\end{textblock}
+
+% TITLE: pdf y0=118.61 → textpos y=123.01
+\begin{textblock}{521.5}(42.0,123.01)
+\noindent{\fontsize{22pt}{27pt}\selectfont\textbf{Onboarding Letter - Turn2Law}}
+\end{textblock}
+
+% DATE: pdf y0=147.93 → textpos y=152.33
+\begin{textblock}{300}(42.0,152.33)
+\noindent{\fontsize{13pt}{18pt}\selectfont Date: 10 June 2026}
+\end{textblock}
+
+% EMP ID: pdf y0=165.93 → textpos y=170.33
+\begin{textblock}{300}(42.0,170.33)
+\noindent{\fontsize{13pt}{18pt}\selectfont Emp ID: T2L-AI-041}
+\end{textblock}
+
+% EMPLOYEE NAME: pdf y0=202.19 → textpos y=206.59
+\begin{textblock}{521.5}(42.0,206.59)
+\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Rahul Verma}}
+\end{textblock}
+
+% JOINING STATEMENT: pdf y0=222.2 → textpos y=226.6  width=477.5pt
+\begin{textblock}{477.5}(42.0,226.6)
+\noindent{\fontsize{13pt}{18pt}\selectfont has officially joined Turn2Law as a \textbf{Software Engineer Intern} as of 1 July 2026.}
+\end{textblock}
+
+% PARA 1: pdf y0=278.47 → textpos y=282.87  width=489.74pt
+\begin{textblock}{489.74}(42.0,282.87)
+\noindent{\fontsize{13pt}{18pt}\selectfont As a valued member of our growing team, Rahul Verma will contribute to our mission to democratize access to justice by blending technology with human expertise.}
+\end{textblock}
+
+% PARA 2: pdf y0=350.5 → textpos y=354.9
+\begin{textblock}{489.74}(42.0,354.9)
+\noindent{\fontsize{13pt}{18pt}\selectfont Our platform is an integrated legal-tech solution offering AI-powered document drafting, verified online lawyer consultancy, and intelligent legal chatbots. It includes specialized startup legal services with compliance guidance, founder agreements, etc.}
+\end{textblock}
+
+% POSITION DETAILS HEADING: pdf y0=440.78 → textpos y=445.18
+\begin{textblock}{521.5}(42.0,445.18)
+\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Position Details}}
+\end{textblock}
+
+% BULLET 1 DOT: pdf path [51,468.62,54.75,472.37] — vector, no text offset
+\begin{textblock}{4}(51.0,468.62)
+\begin{tikzpicture}[x=1pt,y=1pt]\fill[black](1.875,1.875)circle(1.875pt);\end{tikzpicture}
+\end{textblock}
+% BULLET 1 TEXT: pdf y0=460.79 → textpos y=465.19
+\begin{textblock}{457.41}(64.09,465.19)
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Role:} Software Engineer Intern}
+\end{textblock}
+
+% BULLET 2 DOT: pdf path [51,486.63,54.75,490.38]
+\begin{textblock}{4}(51.0,486.63)
+\begin{tikzpicture}[x=1pt,y=1pt]\fill[black](1.875,1.875)circle(1.875pt);\end{tikzpicture}
+\end{textblock}
+% BULLET 2 TEXT: pdf y0=478.8 → textpos y=483.2
+\begin{textblock}{463.83}(64.09,483.2)
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Location:} EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED Block 5, DEI Innovation Hub, SRMIST, Kattankulathur, Chennai -- 603203, Tamil Nadu, India}
+\end{textblock}
+
+% BULLET 3 DOT: pdf path [51,540.65,54.75,544.4]
+\begin{textblock}{4}(51.0,540.65)
+\begin{tikzpicture}[x=1pt,y=1pt]\fill[black](1.875,1.875)circle(1.875pt);\end{tikzpicture}
+\end{textblock}
+% BULLET 3 TEXT: pdf y0=532.82 → textpos y=537.22
+\begin{textblock}{457.41}(64.09,537.22)
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Joining Date:} 1 July 2026}
+\end{textblock}
+
+% CLOSING PARA: pdf y0=568.83 → textpos y=573.23
+\begin{textblock}{489.74}(42.0,573.23)
+\noindent{\fontsize{13pt}{18pt}\selectfont We are excited to have you as part of the Turn2Law team, and we look forward to achieving great things together.}
+\end{textblock}
+
+% BEST REGARDS: pdf y0=622.85 → textpos y=627.25
+\begin{textblock}{200}(42.0,627.25)
+\noindent{\fontsize{13pt}{18pt}\selectfont Best Regards,}
+\end{textblock}
+
+% SIGNATURE IMAGE (xref=47, 308x308px, 80.28x80.28pt): no text offset
+\begin{textblock}{80.28}(47.59,651.43)
+\noindent\includegraphics[width=80.28pt,height=80.28pt,keepaspectratio=false]{sample_asset_1_xref_47}
+\end{textblock}
+
+% FOUNDER NAME: pdf y0=713.13 → textpos y=717.53
+\begin{textblock}{300}(42.0,717.53)
+\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Yash Phoghat}}
+\end{textblock}
+
+% FOUNDER TITLE: pdf y0=733.39 → textpos y=737.79
+\begin{textblock}{300}(42.0,737.79)
+\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Founder \& CEO, TURN2LAW}}
+\end{textblock}
+
+% DIVIDER: filled rect path[16] x=41.98→563.01, y=753.17→756.17 (3pt thick)
+\begin{textblock}{521.03}(41.98,753.17)
+\noindent{\color{black}\rule{521.03pt}{3pt}}
+\end{textblock}
+
+% EMAIL ICON (paths [14,15,17]): outer rect x=409.46→436.83, y=797.25→824.62
+% tikz local coords: outer=27.37x27.37, white body from pdf[414.64,805.63,431.52,815.76]
+% local: x(5.18,22.06) y: tikz_y=27.37-(pdf_y-797.25) → body(8.86,18.99), flap pts below
+\begin{textblock}{27.37}(409.46,797.25)
+\begin{tikzpicture}[x=1pt,y=1pt,baseline=0]
+  \fill[black](0,0)rectangle(27.37,27.37);
+  \fill[white](5.18,8.86)rectangle(22.06,18.99);
+  \fill[white](6.05,18.99)--(21.19,18.99)--(13.62,14.52)--cycle;
+\end{tikzpicture}
+\end{textblock}
+
+% E-MAIL label: pdf y0=797.76 → textpos y=802.16
+\begin{textblock}{130}(441.96,802.16)
+\noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont\textbf{E-MAIL}}
+\end{textblock}
+
+% email address: pdf y0=811.59 → textpos y=815.99
+\begin{textblock}{130}(441.96,815.99)
+\noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont turntwolaw@gmail.com}
+\end{textblock}
+
+\mbox{}
+\end{document}
