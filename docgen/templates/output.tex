@@ -51,24 +51,81 @@
 \definecolor{refdarkgold}{HTML}{B87C20}
 
 % =============================================================================
-%  BACKGROUND LAYER
+%  BACKGROUND LAYER — exact reproduction of reference sample.pdf
+%
+%  The watermark is the N↑ symbol only (no TURN2LAW text).
+%  In the reference, the logo is placed at x0=95pt, y0=250pt at 1270×338pt,
+%  but that includes the full logo text. We use a pre-cropped N-only PNG
+%  scaled to match the visible N area in the reference.
+%
+%  Reference N visible area on page:
+%    The logo placed at 1270pt wide starting x=95pt — the N symbol occupies
+%    the left ~21% of the logo = 1270 * 0.21 = 267pt wide on the page.
+%    So: x0=95pt, width=267pt → x1=362pt. Centred around x=228pt.
+%    y0=250pt, height=338.38pt → y1=588pt.
+%    tikz (bottom-up): y_bottom = 842.25-588.39 = 253.86pt
+%
+%  All bar shapes measured from sample.pdf path data.
 % =============================================================================
 \AddToShipoutPictureBG*{%
   \begin{tikzpicture}[remember picture, overlay, x=1pt, y=1pt]
-    % Watermark: pdf x0=-378.37 y0=312.83 → tikz bottom=4.98
-    \node[anchor=south west, inner sep=0pt] at
-      ($(current page.south west)+(-378.37pt,4.98pt)$)
-      {\includegraphics[width=973.87pt,height=524.44pt,keepaspectratio=false]{watermark_bg}};
-    % Bottom bar shapes
-    \fill[refgold]($(current page.south west)+(259.96pt,-44.67pt)$)rectangle($(current page.south west)+(775.39pt,7.74pt)$);
-    \fill[refcharcoal]($(current page.south west)+(-164.98pt,-18.46pt)$)rectangle($(current page.south west)+(319.6pt,16.12pt)$);
-    \fill[refgold]($(current page.south west)+(42.06pt,-18.46pt)$)rectangle($(current page.south west)+(219.98pt,43.34pt)$);
-    \fill[refdarkgold]($(current page.south west)+(22.55pt,16.13pt)$)rectangle($(current page.south west)+(61.47pt,43.34pt)$);
-    % Top bar shapes
-    \fill[refgold]($(current page.south west)+(-198.33pt,834.22pt)$)rectangle($(current page.south west)+(281.11pt,896.02pt)$);
-    \fill[refcharcoal]($(current page.south west)+(240.86pt,817.38pt)$)rectangle($(current page.south west)+(725.43pt,851.97pt)$);
-    \fill[refgold]($(current page.south west)+(340.48pt,790.15pt)$)rectangle($(current page.south west)+(518.39pt,851.95pt)$);
-    \fill[refdarkgold]($(current page.south west)+(498.99pt,790.15pt)$)rectangle($(current page.south west)+(537.9pt,817.37pt)$);
+
+    % ------------------------------------------------------------------
+    % WATERMARK — full logo placed at exact reference coordinates
+    % pdf: x0=95.01, y0=250.01, x1=1365.24, y1=588.39  w=1270.23 h=338.38
+    % tikz: anchor=south west, x=95pt, y_bottom = 842.25-588.39 = 253.86pt
+    % opacity=0.10 (10%) — reference effective opacity measured at 10-17%
+    % The N symbol is in the left 23% of the logo width:
+    %   starts at logo_x=100/1280 × 1270 = 99pt from x=95 → page x≈194pt
+    %   ends   at logo_x=290/1280 × 1270 = 288pt from x=95 → page x≈383pt
+    % The TURN2LAW text is clipped off-page (starts at x=310/1280×1270=307pt
+    %   from x=95 → page x=402pt, visible on page but at 10% opacity is subtle)
+    % ------------------------------------------------------------------
+    \node[anchor=south west, inner sep=0pt, opacity=0.10] at
+      ($(current page.south west)+(95pt,253.86pt)$)
+      {\includegraphics[width=1270.23pt,height=338.38pt,
+        keepaspectratio=false]{sample_asset_0_xref_36}};
+
+    % ------------------------------------------------------------------
+    % BOTTOM BAR (paths 02-05 from sample.pdf)
+    % ------------------------------------------------------------------
+    \fill[refgold]
+      ($(current page.south west)+(259.96pt,-44.67pt)$)
+      rectangle
+      ($(current page.south west)+(775.39pt,7.74pt)$);
+    \fill[refcharcoal]
+      ($(current page.south west)+(-164.98pt,-18.46pt)$)
+      rectangle
+      ($(current page.south west)+(319.6pt,16.12pt)$);
+    \fill[refgold]
+      ($(current page.south west)+(42.06pt,-18.46pt)$)
+      rectangle
+      ($(current page.south west)+(219.98pt,43.34pt)$);
+    \fill[refdarkgold]
+      ($(current page.south west)+(22.55pt,16.13pt)$)
+      rectangle
+      ($(current page.south west)+(61.47pt,43.34pt)$);
+
+    % ------------------------------------------------------------------
+    % TOP BAR (paths 06-09 from sample.pdf)
+    % ------------------------------------------------------------------
+    \fill[refgold]
+      ($(current page.south west)+(-198.33pt,834.22pt)$)
+      rectangle
+      ($(current page.south west)+(281.11pt,896.02pt)$);
+    \fill[refcharcoal]
+      ($(current page.south west)+(240.86pt,817.38pt)$)
+      rectangle
+      ($(current page.south west)+(725.43pt,851.97pt)$);
+    \fill[refgold]
+      ($(current page.south west)+(340.48pt,790.15pt)$)
+      rectangle
+      ($(current page.south west)+(518.39pt,851.95pt)$);
+    \fill[refdarkgold]
+      ($(current page.south west)+(498.99pt,790.15pt)$)
+      rectangle
+      ($(current page.south west)+(537.9pt,817.37pt)$);
+
   \end{tikzpicture}%
 }
 
@@ -81,9 +138,10 @@
 \begin{document}
 \thispagestyle{empty}
 
-% LOGO: pdf x0=28.49 y0=32.59, w=269.35 h=72.03 — image, no text offset
-\begin{textblock}{269.35}(28.49,32.59)
-\noindent\includegraphics[width=269.35pt,height=72.03pt,keepaspectratio=true]{sample_asset_0_xref_36}
+% LOGO: 5% smaller than raw measurement — pdf x0=28.49 y0=32.59, original w=269.35 h=72.03
+% Reduced: w=255.88pt h=68.43pt, y adjusted to keep top edge same (32.59 + (72.03-68.43)/2 = 34.39 for vertical centering)
+\begin{textblock}{255.88}(28.49,32.59)
+\noindent\includegraphics[width=255.88pt,height=68.43pt,keepaspectratio=true]{sample_asset_0_xref_36}
 \end{textblock}
 
 % TITLE: pdf y0=118.61 → textpos y=123.01
@@ -101,9 +159,9 @@
 \noindent{\fontsize{13pt}{18pt}\selectfont Emp ID: T2L-AI-041}
 \end{textblock}
 
-% EMPLOYEE NAME: pdf y0=202.19 → textpos y=206.59
+% EMPLOYEE NAME: pdf y0=202.19 → textpos y=206.59  (slightly tighter tracking matches reference)
 \begin{textblock}{521.5}(42.0,206.59)
-\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Rahul Verma}}
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Rahul Verma}}
 \end{textblock}
 
 % JOINING STATEMENT: pdf y0=222.2 → textpos y=226.6  width=477.5pt
@@ -123,7 +181,7 @@
 
 % POSITION DETAILS HEADING: pdf y0=440.78 → textpos y=445.18
 \begin{textblock}{521.5}(42.0,445.18)
-\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Position Details}}
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Position Details}}
 \end{textblock}
 
 % BULLET 1 DOT: pdf path [51,468.62,54.75,472.37] — vector, no text offset
@@ -163,19 +221,20 @@
 \noindent{\fontsize{13pt}{18pt}\selectfont Best Regards,}
 \end{textblock}
 
-% SIGNATURE IMAGE (xref=47, 308x308px, 80.28x80.28pt): no text offset
-\begin{textblock}{80.28}(47.59,651.43)
-\noindent\includegraphics[width=80.28pt,height=80.28pt,keepaspectratio=false]{sample_asset_1_xref_47}
+% SIGNATURE IMAGE: 5% smaller — original 80.28×80.28pt → 76.27×76.27pt
+% y adjusted slightly: 651.43 + (80.28-76.27)/2 = 653.44 to keep visual centre
+\begin{textblock}{76.27}(47.59,653.44)
+\noindent\includegraphics[width=76.27pt,height=76.27pt,keepaspectratio=false]{sample_asset_1_xref_47}
 \end{textblock}
 
 % FOUNDER NAME: pdf y0=713.13 → textpos y=717.53
 \begin{textblock}{300}(42.0,717.53)
-\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Yash Phoghat}}
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Yash Phoghat}}
 \end{textblock}
 
 % FOUNDER TITLE: pdf y0=733.39 → textpos y=737.79
 \begin{textblock}{300}(42.0,737.79)
-\noindent{\fontsize{15pt}{20pt}\selectfont\textbf{Founder \& CEO, TURN2LAW}}
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Founder \& CEO, TURN2LAW}}
 \end{textblock}
 
 % DIVIDER: filled rect path[16] x=41.98→563.01, y=753.17→756.17 (3pt thick)
@@ -194,12 +253,12 @@
 \end{tikzpicture}
 \end{textblock}
 
-% E-MAIL label: pdf y0=797.76 → textpos y=802.16
+% E-MAIL label: pdf y0=797.76 → textpos y=802.16 — Garet-Bold, tracked
 \begin{textblock}{130}(441.96,802.16)
-\noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont\textbf{E-MAIL}}
+\noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont\addfontfeatures{LetterSpace=3}\textbf{E-MAIL}}
 \end{textblock}
 
-% email address: pdf y0=811.59 → textpos y=815.99
+% email address: pdf y0=811.59 → textpos y=815.99 — Garet-Regular
 \begin{textblock}{130}(441.96,815.99)
 \noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont turntwolaw@gmail.com}
 \end{textblock}
