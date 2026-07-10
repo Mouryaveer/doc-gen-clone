@@ -37,6 +37,8 @@ def _run_xelatex(tex_path: str, work_dir: str, pass_num: int) -> None:
         cwd=work_dir,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     if result.returncode != 0:
         log_snippet = result.stdout[-4000:] if result.stdout else "(no output)"
@@ -83,22 +85,55 @@ def render_latex(
     images_dir = os.path.abspath(images_dir).replace("\\", "/") + "/"
     fonts_dir  = os.path.join(os.path.dirname(template_path), "..", "fonts")
     fonts_dir  = os.path.abspath(fonts_dir).replace("\\", "/") + "/"
+    layouts_dir = os.path.join(os.path.dirname(template_path), "..", "layouts")
+    layouts_dir = os.path.abspath(layouts_dir).replace("\\", "/") + "/"
 
     # Read template
     with open(template_path, "r", encoding="utf-8") as f:
         tex = f.read()
 
-    # Inject the absolute images path so \graphicspath always resolves
+    # Inject absolute paths
     tex = tex.replace(
         r"\graphicspath{{IMAGES_DIR_PLACEHOLDER}}",
         r"\graphicspath{{" + images_dir + r"}}",
     )
-    # Inject absolute font path for fontspec Path= directives
     tex = tex.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
+    tex = tex.replace("LAYOUTS_DIR_PLACEHOLDER", layouts_dir)
 
-    # Replace all {{KEY}} placeholders with escaped values
+    # Also inject paths into the brand_preamble if it is being compiled
+    # as a standalone file (it uses the same placeholders)
+    preamble_path = os.path.join(layouts_dir.rstrip("/"), "brand_preamble.tex")
+    if os.path.exists(preamble_path):
+        with open(preamble_path, "r", encoding="utf-8") as f:
+            preamble = f.read()
+        rendered_preamble = preamble.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
+        rendered_preamble = rendered_preamble.replace("IMAGES_DIR_PLACEHOLDER", images_dir)
+        rendered_preamble_path = os.path.join(
+            os.path.dirname(template_path), "..", "layouts", "brand_preamble_rendered.tex"
+        )
+        rendered_preamble_path = os.path.abspath(rendered_preamble_path)
+        with open(rendered_preamble_path, "w", encoding="utf-8") as f:
+            f.write(rendered_preamble)
+        # Point \input to the rendered version
+        tex = tex.replace(
+            r"\input{" + layouts_dir + r"brand_preamble}",
+            r"\input{" + layouts_dir + r"brand_preamble_rendered}",
+        )
+
+    # Replace all {{KEY}} placeholders with escaped values.
+    # Optional fields not provided by the caller are replaced with empty string
+    # so that \ifthenelse{\equal{...}{}}{}{...} guards in templates work correctly.
+    from schema import DOCUMENT_SCHEMAS  # late import avoids circular dep
+    all_optional = set()
+    for schema in DOCUMENT_SCHEMAS.values():
+        all_optional.update(schema.get("optional", []))
+
     for key, raw_value in values.items():
         tex = tex.replace(f"{{{{{key}}}}}", _escape_latex(raw_value))
+
+    # Replace any remaining {{KEY}} (optional fields not supplied) with ""
+    import re
+    tex = re.sub(r"\{\{[A-Za-z_]+\}\}", "", tex)
 
     # Write rendered .tex into the work directory (next to the template)
     rendered_tex = os.path.join(work_dir, os.path.basename(output_tex))

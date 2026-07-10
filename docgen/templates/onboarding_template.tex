@@ -210,26 +210,8 @@
 \noindent{\color{black}\rule{521.03pt}{3pt}}
 \end{textblock}
 
-% EMAIL ICON (paths [14,15,17]): outer rect x=409.46→436.83, y=797.25→824.62
-% tikz local coords: outer=27.37x27.37, white body from pdf[414.64,805.63,431.52,815.76]
-% local: x(5.18,22.06) y: tikz_y=27.37-(pdf_y-797.25) → body(8.86,18.99), flap pts below
-\begin{textblock}{27.37}(409.46,797.25)
-\begin{tikzpicture}[x=1pt,y=1pt,baseline=0]
-  \fill[black](0,0)rectangle(27.37,27.37);
-  \fill[white](5.18,8.86)rectangle(22.06,18.99);
-  \fill[white](6.05,18.99)--(21.19,18.99)--(13.62,14.52)--cycle;
-\end{tikzpicture}
-\end{textblock}
-
-% E-MAIL label: pdf y0=797.76 → textpos y=802.16 — Garet-Bold, tracked
-\begin{textblock}{130}(441.96,802.16)
-\noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont\addfontfeatures{LetterSpace=3}\textbf{E-MAIL}}
-\end{textblock}
-
-% email address: pdf y0=811.59 → textpos y=815.99 — Garet-Regular
-\begin{textblock}{130}(441.96,815.99)
-\noindent{\garetfont\fontsize{8.424pt}{11pt}\selectfont turntwolaw@gmail.com}
-\end{textblock}
+% Footer (E-MAIL label + address + icon) is fully contained in footer_decoration.png
+% which is placed by the background layer. No additional drawing needed here.
 
 \mbox{}
 \end{document}

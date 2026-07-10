@@ -4,7 +4,7 @@
 %  Governed by the Indian Contract Act, 1872
 % =============================================================================
 \documentclass[10pt]{article}
-\input{C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/layouts/brand_preamble_rendered}
+\input{LAYOUTS_DIR_PLACEHOLDERbrand_preamble}
 
 \usepackage{titlesec}
 \titleformat{\section}{\fontsize{11pt}{14pt}\selectfont\bfseries}{}{0pt}{}[\vspace{-4pt}\rule{\linewidth}{0.4pt}]
@@ -19,14 +19,14 @@
 \end{center}
 
 \vspace{10pt}
-\noindent This Memorandum of Understanding (\textbf{"MOU"}) is entered into as of \textbf{10 July 2026} (\textbf{"Effective Date"}) by and between:
+\noindent This Memorandum of Understanding (\textbf{"MOU"}) is entered into as of \textbf{{{Date}}} (\textbf{"Effective Date"}) by and between:
 
 \vspace{8pt}
 \begin{tabularx}{\textwidth}{@{}lX@{}}
 \textbf{Party A:} &
-\textbf{EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED} (\textbf{"Party A"});\\[6pt]
+\textbf{{{PartyA_Name}}} (\textbf{"Party A"});\\[6pt]
 \textbf{Party B:} &
-\textbf{IIT Madras Incubation Cell, Chennai} (\textbf{"Party B"}).\\
+\textbf{{{PartyB_Name}}} (\textbf{"Party B"}).\\
 \end{tabularx}
 
 \vspace{6pt}
@@ -37,7 +37,7 @@
 \textbf{1.1} The Parties have expressed a mutual interest in collaborating on the following purpose (\textbf{"Purpose"}):
 
 \vspace{4pt}
-\noindent\textit{Collaboration on legal technology research, co-development of AI-powered legal tools for startups, and joint awareness programs for student entrepreneurs.}
+\noindent\textit{{{Purpose}}}
 
 \vspace{6pt}
 \textbf{1.2} This MOU sets out the understanding between the Parties regarding the terms of their collaboration. This MOU is intended to be a statement of intent and, unless expressly stated otherwise, does not create binding legal obligations enforceable as a contract.
@@ -56,10 +56,10 @@
 
 \textbf{3.3} Neither Party shall make any commitment or incur any expenditure on behalf of the other without prior written authorisation.
 
-\ifthenelse{\equal{Each Party shall treat all shared research data and technical methodologies as strictly confidential.}{}}{}{%
+\ifthenelse{\equal{{{Confidentiality}}}{}}{}{%
 \section{CONFIDENTIALITY}
 
-Each Party shall treat all shared research data and technical methodologies as strictly confidential. Each Party agrees to keep confidential all non-public information shared by the other Party in connection with this MOU and to use such information solely for the Purpose. This obligation shall survive the expiry or termination of this MOU for a period of three (3) years.
+{{Confidentiality}} Each Party agrees to keep confidential all non-public information shared by the other Party in connection with this MOU and to use such information solely for the Purpose. This obligation shall survive the expiry or termination of this MOU for a period of three (3) years.
 }
 
 \section{INTELLECTUAL PROPERTY}
@@ -72,18 +72,18 @@ Each Party shall treat all shared research data and technical methodologies as s
 
 \section{DURATION}
 
-\textbf{6.1} This MOU shall be effective from the Effective Date and shall remain in force for a period of \textbf{one (1) year}, unless renewed by mutual written agreement or earlier terminated pursuant to Clause~7.
+\textbf{6.1} This MOU shall be effective from the Effective Date and shall remain in force for a period of \textbf{{{Term}}}, unless renewed by mutual written agreement or earlier terminated pursuant to Clause~7.
 
-\ifthenelse{\equal{}{}}{}{%
-\textbf{6.2 Applicable Law Note:} 
+\ifthenelse{\equal{{{Governing_Law}}}{}}{}{%
+\textbf{6.2 Applicable Law Note:} {{Governing_Law}}
 }
 
 \section{TERMINATION}
 
 \textbf{7.1} Either Party may terminate this MOU by giving \textbf{thirty (30) days'} prior written notice to the other Party.
 
-\ifthenelse{\equal{}{}}{}{%
-\textbf{7.2} 
+\ifthenelse{\equal{{{Termination_Clause}}}{}}{}{%
+\textbf{7.2} {{Termination_Clause}}
 }
 
 \textbf{7.3} Termination of this MOU shall not affect any rights or obligations that accrued prior to termination.
@@ -94,9 +94,9 @@ Unless separately agreed in a binding contract executed by both Parties, nothing
 
 \section{DISPUTE RESOLUTION AND GOVERNING LAW}
 
-\textbf{9.1} This MOU shall be governed by and construed in accordance with the laws of \textbf{Chennai, Tamil Nadu}, including the Indian Contract Act, 1872.
+\textbf{9.1} This MOU shall be governed by and construed in accordance with the laws of \textbf{{{Jurisdiction}}}, including the Indian Contract Act, 1872.
 
-\textbf{9.2} Any dispute arising out of or in connection with this MOU shall first be resolved through good-faith discussions between the Parties. If unresolved within thirty (30) days, the dispute shall be referred to arbitration under the Arbitration and Conciliation Act, 1996. The seat of arbitration shall be Chennai, Tamil Nadu.
+\textbf{9.2} Any dispute arising out of or in connection with this MOU shall first be resolved through good-faith discussions between the Parties. If unresolved within thirty (30) days, the dispute shall be referred to arbitration under the Arbitration and Conciliation Act, 1996. The seat of arbitration shall be {{Jurisdiction}}.
 
 \section{MISCELLANEOUS}
 
@@ -119,7 +119,7 @@ Unless separately agreed in a binding contract executed by both Parties, nothing
 \textbf{PARTY A} &
 \textbf{PARTY B} \\[24pt]
 \rule{200pt}{0.5pt} & \rule{200pt}{0.5pt} \\[3pt]
-EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED & IIT Madras Incubation Cell, Chennai \\[3pt]
+{{PartyA_Name}} & {{PartyB_Name}} \\[3pt]
 Date: \underline{\hspace{70pt}} & Date: \underline{\hspace{70pt}} \\[20pt]
 \textbf{Witness (Party A):} & \textbf{Witness (Party B):} \\[24pt]
 \rule{200pt}{0.5pt} & \rule{200pt}{0.5pt} \\[3pt]

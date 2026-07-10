@@ -1,0 +1,147 @@
+% =============================================================================
+%  Turn2Law — Service Contract
+%  Compiler : XeLaTeX  |  Multi-page, brand-consistent
+%  Governed by the Indian Contract Act, 1872
+% =============================================================================
+\documentclass[10pt]{article}
+\input{LAYOUTS_DIR_PLACEHOLDERbrand_preamble}
+
+\usepackage{titlesec}
+\titleformat{\section}{\fontsize{11pt}{14pt}\selectfont\bfseries}{}{0pt}{}[\vspace{-4pt}\rule{\linewidth}{0.4pt}]
+\titlespacing{\section}{0pt}{14pt}{6pt}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{center}
+  {\fontsize{15pt}{19pt}\selectfont\textbf{SERVICE AGREEMENT}}\\[4pt]
+  {\fontsize{9pt}{12pt}\selectfont\textit{Governed by the Indian Contract Act, 1872}}
+\end{center}
+
+\vspace{10pt}
+\noindent This Service Agreement (\textbf{"Agreement"}) is entered into as of \textbf{{{Contract_Creation_Date}}} (\textbf{"Effective Date"}) by and between:
+
+\vspace{8pt}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Service Provider:} &
+\textbf{EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED}, incorporated under the Companies Act, 2013, having its registered office at Block~5, DEI Innovation Hub, SRMIST, Kattankulathur, Chennai\,--\,603203, Tamil Nadu, India (\textbf{"Turn2Law"} or \textbf{"Service Provider"});\\[6pt]
+\textbf{Client:} &
+\textbf{{{Client_Name}}}, of {{Company}} (\textbf{"Client"}).\\
+\end{tabularx}
+
+\vspace{6pt}
+\noindent Turn2Law and the Client are hereinafter collectively referred to as the \textbf{"Parties"}.
+
+\section{SCOPE OF SERVICES}
+
+\textbf{1.1} Turn2Law agrees to provide the following services to the Client (\textbf{"Services"}):
+
+\vspace{4pt}
+\noindent\textit{{{Service_Description}}}
+
+\vspace{6pt}
+\textbf{1.2} Any additional services requested by the Client beyond those described in Clause~1.1 shall be subject to a separate written agreement and additional consideration.
+
+\textbf{1.3 Service Period:} The Services shall commence on \textbf{{{Start_Date}}} and continue until \textbf{{{End_Date}}} (\textbf{"Service Period"}), unless earlier terminated in accordance with Clause~9.
+
+\section{DELIVERABLES AND TIMELINE}
+
+\textbf{2.1} Turn2Law shall provide deliverables as mutually agreed in writing between the Parties prior to commencement of the relevant service.
+
+\textbf{2.2} Any change in the scope of deliverables or timeline shall be documented in a written Change Order signed by both Parties. Turn2Law shall not be responsible for delays caused by the Client's failure to provide necessary information, approvals, or access.
+
+\section{PAYMENT TERMS}
+
+\textbf{3.1 Fees:} The Client shall pay Turn2Law a total fee of \textbf{{{Payment_Amount}}} (\textbf{"Contract Value"}) for the Services.
+
+\ifthenelse{\equal{{{Payment_Schedule}}}{}}{%
+\textbf{3.2 Payment Schedule:} Payment shall be made as agreed between the Parties in writing. All payments are due within fifteen (15) days of the applicable invoice date.
+}{%
+\textbf{3.2 Payment Schedule:} {{Payment_Schedule}}
+}
+
+\textbf{3.3 Taxes:} All fees are exclusive of applicable Goods and Services Tax (GST) or other statutory levies, which shall be charged additionally as per prevailing rates.
+
+\textbf{3.4 Late Payment:} In the event of delayed payment beyond the due date, Turn2Law reserves the right to charge interest at the rate of \textbf{18\% per annum} on the overdue amount, calculated from the due date until the date of actual payment.
+
+\section{INTELLECTUAL PROPERTY}
+
+\textbf{4.1 Client Materials:} All materials, data, and information provided by the Client to Turn2Law for the purpose of performing the Services (\textbf{"Client Materials"}) shall remain the exclusive property of the Client.
+
+\textbf{4.2 Deliverables:} Upon receipt of full payment, Turn2Law assigns to the Client all rights, title, and interest in the deliverables specifically created for the Client under this Agreement. Pre-existing IP of Turn2Law embedded in the deliverables is licensed, not assigned, on a non-exclusive basis for the Client's internal use.
+
+\textbf{4.3 Turn2Law IP:} All pre-existing intellectual property, tools, methodologies, frameworks, and the Platform remain the exclusive property of Turn2Law.
+
+\section{CONFIDENTIALITY}
+
+\textbf{5.1} Each Party agrees to keep confidential all non-public information received from the other Party in connection with this Agreement and to use such information solely for the purpose of performing its obligations hereunder.
+
+\textbf{5.2} This obligation shall survive termination for a period of three (3) years.
+
+\section{REPRESENTATIONS AND WARRANTIES}
+
+\textbf{6.1} Turn2Law represents and warrants that: (a) it has the full right and authority to enter into this Agreement; (b) the Services will be performed in a professional and workmanlike manner; and (c) the deliverables will not infringe any third-party intellectual property rights.
+
+\textbf{6.2} The Client represents and warrants that: (a) it has the authority to enter into this Agreement; and (b) all Client Materials provided are accurate, lawful, and do not infringe third-party rights.
+
+\section{LIMITATION OF LIABILITY}
+
+\textbf{7.1} Turn2Law's aggregate liability under this Agreement, regardless of the form of action, shall not exceed the total fees paid by the Client in the three (3) months preceding the event giving rise to liability.
+
+\textbf{7.2} Neither Party shall be liable for indirect, incidental, special, consequential, or punitive damages, including loss of profits, revenue, data, or business opportunity.
+
+\section{INDEMNIFICATION}
+
+The Client shall indemnify, defend, and hold harmless Turn2Law and its directors, officers, employees, and agents from and against any claims, damages, liabilities, costs, and expenses (including reasonable legal fees) arising from: (a) the Client's breach of this Agreement; (b) use of the deliverables in a manner not contemplated herein; or (c) Client Materials that infringe third-party rights.
+
+\section{TERMINATION}
+
+\textbf{9.1} Either Party may terminate this Agreement for convenience by giving \textbf{thirty (30) days'} prior written notice to the other Party.
+
+\ifthenelse{\equal{{{Termination_Clause}}}{}}{}{%
+\textbf{9.2 Additional Termination Terms:} {{Termination_Clause}}
+}
+
+\textbf{9.3} Either Party may terminate this Agreement immediately upon written notice if the other Party: (a) materially breaches this Agreement and fails to cure such breach within fifteen (15) days of written notice; or (b) becomes insolvent, makes an assignment for the benefit of creditors, or is subject to liquidation proceedings.
+
+\textbf{9.4} Upon termination, the Client shall pay Turn2Law for all Services rendered and expenses incurred up to the effective date of termination.
+
+\section{FORCE MAJEURE}
+
+Neither Party shall be liable for delays or non-performance caused by events beyond its reasonable control, including but not limited to acts of God, war, pandemic, government action, internet disruption, or natural disasters. The affected Party shall promptly notify the other and use reasonable efforts to mitigate the impact.
+
+\section{DISPUTE RESOLUTION AND GOVERNING LAW}
+
+\textbf{11.1} This Agreement shall be governed by the laws of India, including the Indian Contract Act, 1872.
+
+\textbf{11.2} Any dispute shall first be resolved through good-faith negotiation. If unresolved within thirty (30) days, the dispute shall be submitted to binding arbitration under the Arbitration and Conciliation Act, 1996. The seat of arbitration shall be Chennai, Tamil Nadu. The language of arbitration shall be English.
+
+\section{MISCELLANEOUS}
+
+\textbf{12.1 Entire Agreement.} This Agreement constitutes the entire agreement of the Parties and supersedes all prior agreements relating to its subject matter.
+
+\textbf{12.2 Amendment.} No amendment shall be valid unless made in writing and signed by both Parties.
+
+\textbf{12.3 Severability.} Any provision held invalid shall not affect the validity of the remaining provisions.
+
+\textbf{12.4 No Waiver.} Failure to enforce any provision shall not constitute a waiver.
+
+\textbf{12.5 Independent Contractors.} The Parties are independent contractors. Nothing herein creates employment, agency, partnership, or joint venture.
+
+\section*{EXECUTION}
+
+\noindent IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.
+
+\vspace{16pt}
+\noindent\begin{tabularx}{\textwidth}{@{}X@{\hspace{20pt}}X@{}}
+\textbf{EFFIVIA TURN2LAW LEGAL} &
+\textbf{CLIENT} \\
+\textbf{PRIVATE LIMITED} & \\[24pt]
+\rule{200pt}{0.5pt} & \rule{200pt}{0.5pt} \\[3pt]
+Authorised Signatory & {{Client_Name}} \\[3pt]
+Name: Yash Phoghat & Company: {{Company}} \\[3pt]
+Designation: Founder \& CEO & \\[3pt]
+Date: \underline{\hspace{70pt}} & Date: \underline{\hspace{70pt}} \\
+\end{tabularx}
+
+\end{document}

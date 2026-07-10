@@ -1,0 +1,95 @@
+% =============================================================================
+%  brand_preamble.tex — Turn2Law shared document preamble
+%  Include in every template AFTER \documentclass.
+%
+%  Two modes:
+%   - Single-page (onboarding): uses absolute textpos, caller manages body
+%   - Multi-page (legal docs):  uses normal LaTeX flow with brand margins
+%
+%  PLACEHOLDERS replaced by latex_writer.py:
+%    C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/   → absolute path to docgen/fonts/
+%    C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/images/  → absolute path to docgen/images/
+% =============================================================================
+
+\usepackage{fontspec}
+\setmainfont[
+  Path           = C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/,
+  UprightFont    = Montserrat-Regular-Full.ttf,
+  BoldFont       = Montserrat-Bold-Full.ttf,
+  ItalicFont     = Montserrat-Regular-Full.ttf,
+  BoldItalicFont = Montserrat-Bold-Full.ttf
+]{Montserrat}
+
+\newfontfamily\garetfont[
+  Path        = C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/,
+  UprightFont = Garet-Regular.ttf,
+  BoldFont    = Garet-Bold.ttf
+]{Garet}
+
+% Legal document margins: top clears the 58pt header bar, bottom clears 50pt footer
+\usepackage[
+  paperwidth=595.5pt,
+  paperheight=842.25pt,
+  top=74pt,
+  bottom=66pt,
+  left=42pt,
+  right=32pt,
+  noheadfoot
+]{geometry}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1pt}
+\setlength{\TPVertModule}{1pt}
+\usepackage{needspace}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{tabularx}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\linespread{1.25}
+
+\graphicspath{{C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/images/}}
+\pagenumbering{gobble}
+
+% Colours
+\definecolor{refgold}{HTML}{FFBD58}
+\definecolor{refcharcoal}{HTML}{2A2A2A}
+\definecolor{refdarkgold}{HTML}{B87C20}
+\definecolor{t2ldark}{HTML}{2A2A2A}
+
+% =============================================================================
+%  Brand background — repeats on EVERY page (no * suffix)
+% =============================================================================
+\AddToShipoutPictureBG{%
+  \begin{tikzpicture}[remember picture, overlay, x=1pt, y=1pt]
+    % Watermark
+    \node[anchor=south west, inner sep=0pt, opacity=0.10] at
+      ($(current page.south west)+(95pt,253.86pt)$)
+      {\includegraphics[width=1270.23pt,height=338.38pt,
+        keepaspectratio=false]{sample_asset_0_xref_36}};
+    % Header decoration — contains header shapes
+    \node[anchor=north west, inner sep=0pt] at
+      ($(current page.north west)+(0pt,0pt)$)
+      {\includegraphics[width=595.5pt,height=58pt,
+        keepaspectratio=false]{header_decoration}};
+    % Footer decoration — contains bottom shapes, email icon, E-MAIL label,
+    % and turntwolaw@gmail.com. Everything is already in this PNG.
+    % Do NOT add any TikZ email text or shapes here.
+    \node[anchor=south west, inner sep=0pt] at
+      ($(current page.south west)+(0pt,0pt)$)
+      {\includegraphics[width=595.5pt,height=50pt,
+        keepaspectratio=false]{footer_decoration}};
+    % Logo on every page
+    \node[anchor=north west, inner sep=0pt] at
+      ($(current page.north west)+(28.49pt,-32.59pt)$)
+      {\includegraphics[width=200pt,height=53.5pt,
+        keepaspectratio=true]{sample_asset_0_xref_36}};
+  \end{tikzpicture}%
+}
