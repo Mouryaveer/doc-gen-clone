@@ -51,35 +51,21 @@
 \definecolor{refdarkgold}{HTML}{B87C20}
 
 % =============================================================================
-%  BACKGROUND LAYER — exact reproduction of reference sample.pdf
+%  BACKGROUND LAYER
 %
-%  The watermark is the N↑ symbol only (no TURN2LAW text).
-%  In the reference, the logo is placed at x0=95pt, y0=250pt at 1270×338pt,
-%  but that includes the full logo text. We use a pre-cropped N-only PNG
-%  scaled to match the visible N area in the reference.
+%  Header and footer decorations are extracted directly from sample.pdf
+%  at 288dpi as PNG assets — this guarantees pixel-perfect parallelogram
+%  shapes with correct angles, no TikZ approximation.
 %
-%  Reference N visible area on page:
-%    The logo placed at 1270pt wide starting x=95pt — the N symbol occupies
-%    the left ~21% of the logo = 1270 * 0.21 = 267pt wide on the page.
-%    So: x0=95pt, width=267pt → x1=362pt. Centred around x=228pt.
-%    y0=250pt, height=338.38pt → y1=588pt.
-%    tikz (bottom-up): y_bottom = 842.25-588.39 = 253.86pt
-%
-%  All bar shapes measured from sample.pdf path data.
+%  Watermark: full logo at 10% opacity, exact reference coordinates.
 % =============================================================================
 \AddToShipoutPictureBG*{%
   \begin{tikzpicture}[remember picture, overlay, x=1pt, y=1pt]
 
     % ------------------------------------------------------------------
-    % WATERMARK — full logo placed at exact reference coordinates
-    % pdf: x0=95.01, y0=250.01, x1=1365.24, y1=588.39  w=1270.23 h=338.38
-    % tikz: anchor=south west, x=95pt, y_bottom = 842.25-588.39 = 253.86pt
-    % opacity=0.10 (10%) — reference effective opacity measured at 10-17%
-    % The N symbol is in the left 23% of the logo width:
-    %   starts at logo_x=100/1280 × 1270 = 99pt from x=95 → page x≈194pt
-    %   ends   at logo_x=290/1280 × 1270 = 288pt from x=95 → page x≈383pt
-    % The TURN2LAW text is clipped off-page (starts at x=310/1280×1270=307pt
-    %   from x=95 → page x=402pt, visible on page but at 10% opacity is subtle)
+    % WATERMARK — full logo at reference coordinates, 10% opacity
+    % pdf: x0=95.01, y0=250.01, w=1270.23, h=338.38
+    % tikz y_bottom = 842.25-588.39 = 253.86
     % ------------------------------------------------------------------
     \node[anchor=south west, inner sep=0pt, opacity=0.10] at
       ($(current page.south west)+(95pt,253.86pt)$)
@@ -87,44 +73,26 @@
         keepaspectratio=false]{sample_asset_0_xref_36}};
 
     % ------------------------------------------------------------------
-    % BOTTOM BAR (paths 02-05 from sample.pdf)
+    % HEADER DECORATION — extracted from sample.pdf at 288dpi
+    % Covers y=0 to y=58pt from top of page
+    % tikz: anchor=north west at top-left, y_top = 842.25pt from bottom
+    % png is 2382×232px representing 595.5×58pt
     % ------------------------------------------------------------------
-    \fill[refgold]
-      ($(current page.south west)+(259.96pt,-44.67pt)$)
-      rectangle
-      ($(current page.south west)+(775.39pt,7.74pt)$);
-    \fill[refcharcoal]
-      ($(current page.south west)+(-164.98pt,-18.46pt)$)
-      rectangle
-      ($(current page.south west)+(319.6pt,16.12pt)$);
-    \fill[refgold]
-      ($(current page.south west)+(42.06pt,-18.46pt)$)
-      rectangle
-      ($(current page.south west)+(219.98pt,43.34pt)$);
-    \fill[refdarkgold]
-      ($(current page.south west)+(22.55pt,16.13pt)$)
-      rectangle
-      ($(current page.south west)+(61.47pt,43.34pt)$);
+    \node[anchor=north west, inner sep=0pt] at
+      ($(current page.north west)+(0pt,0pt)$)
+      {\includegraphics[width=595.5pt,height=58pt,
+        keepaspectratio=false]{header_decoration}};
 
     % ------------------------------------------------------------------
-    % TOP BAR (paths 06-09 from sample.pdf)
+    % FOOTER DECORATION — extracted from sample.pdf at 288dpi
+    % Covers y=792.25pt to y=842.25pt (bottom 50pt of page)
+    % tikz: anchor=south west at bottom-left
+    % png is 2382×200px representing 595.5×50pt
     % ------------------------------------------------------------------
-    \fill[refgold]
-      ($(current page.south west)+(-198.33pt,834.22pt)$)
-      rectangle
-      ($(current page.south west)+(281.11pt,896.02pt)$);
-    \fill[refcharcoal]
-      ($(current page.south west)+(240.86pt,817.38pt)$)
-      rectangle
-      ($(current page.south west)+(725.43pt,851.97pt)$);
-    \fill[refgold]
-      ($(current page.south west)+(340.48pt,790.15pt)$)
-      rectangle
-      ($(current page.south west)+(518.39pt,851.95pt)$);
-    \fill[refdarkgold]
-      ($(current page.south west)+(498.99pt,790.15pt)$)
-      rectangle
-      ($(current page.south west)+(537.9pt,817.37pt)$);
+    \node[anchor=south west, inner sep=0pt] at
+      ($(current page.south west)+(0pt,0pt)$)
+      {\includegraphics[width=595.5pt,height=50pt,
+        keepaspectratio=false]{footer_decoration}};
 
   \end{tikzpicture}%
 }
