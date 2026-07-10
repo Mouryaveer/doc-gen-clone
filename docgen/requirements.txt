@@ -5,3 +5,7 @@ pytesseract
 Pillow
 python-dotenv
 reportlab
+# System packages required for LaTeX/PDF generation (Ubuntu/Debian).
+# These are not Python packages and must be installed with apt, not pip:
+# sudo apt-get update
+# sudo apt-get install -y texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
