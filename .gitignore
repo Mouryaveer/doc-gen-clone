@@ -11,8 +11,7 @@
 .venv/
 venv/
 env/
-.kiro/
-.vscode/
+
 
 # ===============================
 # Environment Variables
