@@ -1,0 +1,10 @@
+{
+  "profile_id": "test_company",
+  "name": "Test Company Ltd",
+  "mode": "custom",
+  "header_image_path": "C:\\Users\\moury\\Downloads\\header_letterhead.png",
+  "footer_image_path": null,
+  "watermark_image_path": null,
+  "logo_image_path": null,
+  "created_at": "2026-07-10T15:29:19.271646+00:00"
+}

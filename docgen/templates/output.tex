@@ -1,129 +1,217 @@
 % =============================================================================
-%  Turn2Law — Memorandum of Understanding
-%  Compiler : XeLaTeX  |  Multi-page, brand-consistent
-%  Governed by the Indian Contract Act, 1872
+%  Turn2Law — Onboarding Letter  (pixel-faithful reproduction)
+%  Compiler : XeLaTeX (two passes required)
+%  Paper    : 595.5 × 842.25 pt  (matches reference MediaBox exactly)
+%
+%  All coordinates derived by direct measurement from sample.pdf via PyMuPDF.
+%  textpos y-offset: +4.4pt added to all text y positions to account for
+%  the difference between PyMuPDF glyph-top bbox and LaTeX textblock top.
 % =============================================================================
 \documentclass[10pt]{article}
-\input{C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/layouts/brand_preamble_rendered}
 
-\usepackage{titlesec}
-\titleformat{\section}{\fontsize{11pt}{14pt}\selectfont\bfseries}{}{0pt}{}[\vspace{-4pt}\rule{\linewidth}{0.4pt}]
-\titlespacing{\section}{0pt}{14pt}{6pt}
+\usepackage{fontspec}
+\setmainfont[
+  Path           = C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/,
+  UprightFont    = Montserrat-Regular-Full.ttf,
+  BoldFont       = Montserrat-Bold-Full.ttf,
+  ItalicFont     = Montserrat-Regular-Full.ttf,
+  BoldItalicFont = Montserrat-Bold-Full.ttf
+]{Montserrat}
 
+\newfontfamily\garetfont[
+  Path        = C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/fonts/,
+  UprightFont = Garet-Regular.ttf,
+  BoldFont    = Garet-Bold.ttf
+]{Garet}
+
+\usepackage[
+  paperwidth  = 595.5pt,
+  paperheight = 842.25pt,
+  top=0pt, bottom=0pt, left=0pt, right=0pt,
+  noheadfoot
+]{geometry}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1pt}
+\setlength{\TPVertModule}{1pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{1.3846}
+
+\graphicspath{{C:/Users/moury/Coding/Turn2Law/documentGeneration-master-1/documentGeneration-master/docgen/images/}}
+\pagenumbering{gobble}
+
+\definecolor{refgold}{HTML}{FFBD58}
+\definecolor{refcharcoal}{HTML}{2A2A2A}
+\definecolor{refdarkgold}{HTML}{B87C20}
+
+% =============================================================================
+%  BACKGROUND LAYER
+%
+%  Header and footer decorations are extracted directly from sample.pdf
+%  at 288dpi as PNG assets — this guarantees pixel-perfect parallelogram
+%  shapes with correct angles, no TikZ approximation.
+%
+%  Watermark: full logo at 10% opacity, exact reference coordinates.
+% =============================================================================
+\AddToShipoutPictureBG*{%
+  \begin{tikzpicture}[remember picture, overlay, x=1pt, y=1pt]
+
+    % ------------------------------------------------------------------
+    % WATERMARK — full logo at reference coordinates, 10% opacity
+    % pdf: x0=95.01, y0=250.01, w=1270.23, h=338.38
+    % tikz y_bottom = 842.25-588.39 = 253.86
+    % ------------------------------------------------------------------
+    \node[anchor=south west, inner sep=0pt, opacity=0.10] at
+      ($(current page.south west)+(95pt,253.86pt)$)
+      {\includegraphics[width=1270.23pt,height=338.38pt,
+        keepaspectratio=false]{sample_asset_0_xref_36}};
+
+    % ------------------------------------------------------------------
+    % HEADER DECORATION — extracted from sample.pdf at 288dpi
+    % Covers y=0 to y=58pt from top of page
+    % tikz: anchor=north west at top-left, y_top = 842.25pt from bottom
+    % png is 2382×232px representing 595.5×58pt
+    % ------------------------------------------------------------------
+    \node[anchor=north west, inner sep=0pt] at
+      ($(current page.north west)+(0pt,0pt)$)
+      {\includegraphics[width=595.5pt,height=58pt,
+        keepaspectratio=false]{header_decoration}};
+
+    % ------------------------------------------------------------------
+    % FOOTER DECORATION — extracted from sample.pdf at 288dpi
+    % Covers y=792.25pt to y=842.25pt (bottom 50pt of page)
+    % tikz: anchor=south west at bottom-left
+    % png is 2382×200px representing 595.5×50pt
+    % ------------------------------------------------------------------
+    \node[anchor=south west, inner sep=0pt] at
+      ($(current page.south west)+(0pt,0pt)$)
+      {\includegraphics[width=595.5pt,height=50pt,
+        keepaspectratio=false]{footer_decoration}};
+
+  \end{tikzpicture}%
+}
+
+% =============================================================================
+%  DOCUMENT BODY — all positions absolute via textpos
+%  Text y-coords = PyMuPDF_bbox_y0 + 4.4pt  (ascender correction)
+%  Image y-coords = PyMuPDF_bbox_y0          (no correction — pixel placement)
+%  Path y-coords  = PyMuPDF_bbox_y0          (no correction — vector paths)
+% =============================================================================
 \begin{document}
 \thispagestyle{empty}
 
-\begin{center}
-  {\fontsize{15pt}{19pt}\selectfont\textbf{MEMORANDUM OF UNDERSTANDING}}\\[4pt]
-  {\fontsize{9pt}{12pt}\selectfont\textit{Governed by the Indian Contract Act, 1872}}
-\end{center}
+% LOGO: 5% smaller than raw measurement — pdf x0=28.49 y0=32.59, original w=269.35 h=72.03
+% Reduced: w=255.88pt h=68.43pt, y adjusted to keep top edge same (32.59 + (72.03-68.43)/2 = 34.39 for vertical centering)
+\begin{textblock}{255.88}(28.49,32.59)
+\noindent\includegraphics[width=255.88pt,height=68.43pt,keepaspectratio=true]{sample_asset_0_xref_36}
+\end{textblock}
 
-\vspace{10pt}
-\noindent This Memorandum of Understanding (\textbf{"MOU"}) is entered into as of \textbf{10 July 2026} (\textbf{"Effective Date"}) by and between:
+% TITLE: pdf y0=118.61 → textpos y=123.01
+\begin{textblock}{521.5}(42.0,123.01)
+\noindent{\fontsize{22pt}{27pt}\selectfont\textbf{Onboarding Letter - Turn2Law}}
+\end{textblock}
 
-\vspace{8pt}
-\begin{tabularx}{\textwidth}{@{}lX@{}}
-\textbf{Party A:} &
-\textbf{EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED} (\textbf{"Party A"});\\[6pt]
-\textbf{Party B:} &
-\textbf{IIT Madras Incubation Cell, Chennai} (\textbf{"Party B"}).\\
-\end{tabularx}
+% DATE: pdf y0=147.93 → textpos y=152.33
+\begin{textblock}{300}(42.0,152.33)
+\noindent{\fontsize{13pt}{18pt}\selectfont Date: 30 June 2026}
+\end{textblock}
 
-\vspace{6pt}
-\noindent Party~A and Party~B are hereinafter collectively referred to as the \textbf{"Parties"}.
+% EMP ID: pdf y0=165.93 → textpos y=170.33
+\begin{textblock}{300}(42.0,170.33)
+\noindent{\fontsize{13pt}{18pt}\selectfont Emp ID: T2L-AI-041}
+\end{textblock}
 
-\section{BACKGROUND AND PURPOSE}
+% EMPLOYEE NAME: pdf y0=202.19 → textpos y=206.59  (slightly tighter tracking matches reference)
+\begin{textblock}{521.5}(42.0,206.59)
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Mourya Veer}}
+\end{textblock}
 
-\textbf{1.1} The Parties have expressed a mutual interest in collaborating on the following purpose (\textbf{"Purpose"}):
+% JOINING STATEMENT: pdf y0=222.2 → textpos y=226.6  width=477.5pt
+\begin{textblock}{477.5}(42.0,226.6)
+\noindent{\fontsize{13pt}{18pt}\selectfont has officially joined Turn2Law as a \textbf{AIML Intern} as of 20 July 2026.}
+\end{textblock}
 
-\vspace{4pt}
-\noindent\textit{Collaboration on legal technology research, co-development of AI-powered legal tools for startups, and joint awareness programs for student entrepreneurs.}
+% PARA 1: pdf y0=278.47 → textpos y=282.87  width=489.74pt
+\begin{textblock}{489.74}(42.0,282.87)
+\noindent{\fontsize{13pt}{18pt}\selectfont As a valued member of our growing team, Mourya Veer will contribute to our mission to democratize access to justice by blending technology with human expertise.}
+\end{textblock}
 
-\vspace{6pt}
-\textbf{1.2} This MOU sets out the understanding between the Parties regarding the terms of their collaboration. This MOU is intended to be a statement of intent and, unless expressly stated otherwise, does not create binding legal obligations enforceable as a contract.
+% PARA 2: pdf y0=350.5 → textpos y=354.9
+\begin{textblock}{489.74}(42.0,354.9)
+\noindent{\fontsize{13pt}{18pt}\selectfont Our platform is an integrated legal-tech solution offering AI-powered document drafting, verified online lawyer consultancy, and intelligent legal chatbots. It includes specialized startup legal services with compliance guidance, founder agreements, etc.}
+\end{textblock}
 
-\section{SCOPE OF COLLABORATION}
+% POSITION DETAILS HEADING: pdf y0=440.78 → textpos y=445.18
+\begin{textblock}{521.5}(42.0,445.18)
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Position Details}}
+\end{textblock}
 
-\textbf{2.1} The Parties agree to collaborate in good faith towards achieving the Purpose. The specific activities, deliverables, and responsibilities shall be mutually agreed in writing and appended to this MOU as Annexures from time to time.
+% BULLET 1 DOT: pdf path [51,468.62,54.75,472.37] — vector, no text offset
+\begin{textblock}{4}(51.0,468.62)
+\begin{tikzpicture}[x=1pt,y=1pt]\fill[black](1.875,1.875)circle(1.875pt);\end{tikzpicture}
+\end{textblock}
+% BULLET 1 TEXT: pdf y0=460.79 → textpos y=465.19
+\begin{textblock}{457.41}(64.09,465.19)
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Role:} AIML Intern}
+\end{textblock}
 
-\textbf{2.2} Each Party shall designate a primary point of contact for the collaboration and shall promptly communicate any changes to such designation.
+% BULLET 2 DOT: pdf path [51,486.63,54.75,490.38]
+\begin{textblock}{4}(51.0,486.63)
+\begin{tikzpicture}[x=1pt,y=1pt]\fill[black](1.875,1.875)circle(1.875pt);\end{tikzpicture}
+\end{textblock}
+% BULLET 2 TEXT: pdf y0=478.8 → textpos y=483.2
+\begin{textblock}{463.83}(64.09,483.2)
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Location:} EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED Block 5, DEI Innovation Hub, SRMIST, Kattankulathur, Chennai -- 603203, Tamil Nadu, India}
+\end{textblock}
 
-\section{RESPONSIBILITIES}
+% BULLET 3 DOT: pdf path [51,540.65,54.75,544.4]
+\begin{textblock}{4}(51.0,540.65)
+\begin{tikzpicture}[x=1pt,y=1pt]\fill[black](1.875,1.875)circle(1.875pt);\end{tikzpicture}
+\end{textblock}
+% BULLET 3 TEXT: pdf y0=532.82 → textpos y=537.22
+\begin{textblock}{457.41}(64.09,537.22)
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Joining Date:} 20 July 2026}
+\end{textblock}
 
-\textbf{3.1 Party A} shall be responsible for: providing relevant resources, information, and support within its domain; timely review and approval of joint deliverables; and maintaining open communication with Party~B.
+% CLOSING PARA: pdf y0=568.83 → textpos y=573.23
+\begin{textblock}{489.74}(42.0,573.23)
+\noindent{\fontsize{13pt}{18pt}\selectfont We are excited to have you as part of the Turn2Law team, and we look forward to achieving great things together.}
+\end{textblock}
 
-\textbf{3.2 Party B} shall be responsible for: contributing expertise, infrastructure, or resources within its domain; timely execution of agreed activities; and adherence to mutually agreed timelines.
+% BEST REGARDS: pdf y0=622.85 → textpos y=627.25
+\begin{textblock}{200}(42.0,627.25)
+\noindent{\fontsize{13pt}{18pt}\selectfont Best Regards,}
+\end{textblock}
 
-\textbf{3.3} Neither Party shall make any commitment or incur any expenditure on behalf of the other without prior written authorisation.
+% SIGNATURE IMAGE: 5% smaller — original 80.28×80.28pt → 76.27×76.27pt
+% y adjusted slightly: 651.43 + (80.28-76.27)/2 = 653.44 to keep visual centre
+\begin{textblock}{76.27}(47.59,653.44)
+\noindent\includegraphics[width=76.27pt,height=76.27pt,keepaspectratio=false]{sample_asset_1_xref_47}
+\end{textblock}
 
-\ifthenelse{\equal{Each Party shall treat all shared research data and technical methodologies as strictly confidential.}{}}{}{%
-\section{CONFIDENTIALITY}
+% FOUNDER NAME: pdf y0=713.13 → textpos y=717.53
+\begin{textblock}{300}(42.0,717.53)
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Yash Phoghat}}
+\end{textblock}
 
-Each Party shall treat all shared research data and technical methodologies as strictly confidential. Each Party agrees to keep confidential all non-public information shared by the other Party in connection with this MOU and to use such information solely for the Purpose. This obligation shall survive the expiry or termination of this MOU for a period of three (3) years.
-}
+% FOUNDER TITLE: pdf y0=733.39 → textpos y=737.79
+\begin{textblock}{300}(42.0,737.79)
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Founder \& CEO, TURN2LAW}}
+\end{textblock}
 
-\section{INTELLECTUAL PROPERTY}
+% DIVIDER: filled rect path[16] x=41.98→563.01, y=753.17→756.17 (3pt thick)
+\begin{textblock}{521.03}(41.98,753.17)
+\noindent{\color{black}\rule{521.03pt}{3pt}}
+\end{textblock}
 
-\textbf{5.1} Each Party retains ownership of its pre-existing intellectual property, including any IP developed independently before or during the term of this MOU.
+% Footer (E-MAIL label + address + icon) is fully contained in footer_decoration.png
+% which is placed by the background layer. No additional drawing needed here.
 
-\textbf{5.2} Any intellectual property jointly developed by the Parties under this MOU shall be jointly owned in equal shares unless otherwise agreed in writing. The Parties shall negotiate in good faith the terms of commercialisation of jointly owned IP.
-
-\textbf{5.3} Neither Party shall use the name, logo, or branding of the other without prior written consent.
-
-\section{DURATION}
-
-\textbf{6.1} This MOU shall be effective from the Effective Date and shall remain in force for a period of \textbf{one (1) year}, unless renewed by mutual written agreement or earlier terminated pursuant to Clause~7.
-
-\ifthenelse{\equal{}{}}{}{%
-\textbf{6.2 Applicable Law Note:} 
-}
-
-\section{TERMINATION}
-
-\textbf{7.1} Either Party may terminate this MOU by giving \textbf{thirty (30) days'} prior written notice to the other Party.
-
-\ifthenelse{\equal{}{}}{}{%
-\textbf{7.2} 
-}
-
-\textbf{7.3} Termination of this MOU shall not affect any rights or obligations that accrued prior to termination.
-
-\section{NO BINDING FINANCIAL COMMITMENTS}
-
-Unless separately agreed in a binding contract executed by both Parties, nothing in this MOU shall constitute a binding financial commitment by either Party. Any financial contributions or cost-sharing arrangements shall be separately documented and executed.
-
-\section{DISPUTE RESOLUTION AND GOVERNING LAW}
-
-\textbf{9.1} This MOU shall be governed by and construed in accordance with the laws of \textbf{Chennai, Tamil Nadu}, including the Indian Contract Act, 1872.
-
-\textbf{9.2} Any dispute arising out of or in connection with this MOU shall first be resolved through good-faith discussions between the Parties. If unresolved within thirty (30) days, the dispute shall be referred to arbitration under the Arbitration and Conciliation Act, 1996. The seat of arbitration shall be Chennai, Tamil Nadu.
-
-\section{MISCELLANEOUS}
-
-\textbf{10.1 Entire Understanding.} This MOU represents the entire understanding between the Parties regarding the Purpose and supersedes all prior discussions and understandings.
-
-\textbf{10.2 Amendment.} This MOU may be amended only by a written instrument signed by authorised representatives of both Parties.
-
-\textbf{10.3 Severability.} If any provision of this MOU is found to be invalid, the remaining provisions shall continue in full force.
-
-\textbf{10.4 No Partnership.} This MOU does not create a partnership, joint venture, agency, or employment relationship between the Parties.
-
-\textbf{10.5 Counterparts.} This MOU may be executed in counterparts, each of which shall be deemed an original.
-
-\section*{EXECUTION}
-
-\noindent IN WITNESS WHEREOF, the authorised representatives of the Parties have signed this MOU as of the Effective Date.
-
-\vspace{16pt}
-\noindent\begin{tabularx}{\textwidth}{@{}X@{\hspace{20pt}}X@{}}
-\textbf{PARTY A} &
-\textbf{PARTY B} \\[24pt]
-\rule{200pt}{0.5pt} & \rule{200pt}{0.5pt} \\[3pt]
-EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED & IIT Madras Incubation Cell, Chennai \\[3pt]
-Date: \underline{\hspace{70pt}} & Date: \underline{\hspace{70pt}} \\[20pt]
-\textbf{Witness (Party A):} & \textbf{Witness (Party B):} \\[24pt]
-\rule{200pt}{0.5pt} & \rule{200pt}{0.5pt} \\[3pt]
-Name: \underline{\hspace{70pt}} & Name: \underline{\hspace{70pt}} \\
-\end{tabularx}
-
+\mbox{}
 \end{document}

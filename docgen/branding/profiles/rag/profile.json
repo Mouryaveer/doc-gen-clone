@@ -1,0 +1,10 @@
+{
+  "profile_id": "rag",
+  "name": "RAG",
+  "mode": "custom",
+  "header_image_path": "C:\\Users\\moury\\AppData\\Local\\Temp\\t2l_brand_ihae77t4\\header.png",
+  "footer_image_path": "C:\\Users\\moury\\AppData\\Local\\Temp\\t2l_brand_ihae77t4\\footer.png",
+  "watermark_image_path": "C:\\Users\\moury\\AppData\\Local\\Temp\\t2l_brand_ihae77t4\\watermark.png",
+  "logo_image_path": "C:\\Users\\moury\\AppData\\Local\\Temp\\t2l_brand_ihae77t4\\logo.png",
+  "created_at": "2026-07-10T17:38:57.776192+00:00"
+}

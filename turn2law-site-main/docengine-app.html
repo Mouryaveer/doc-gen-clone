@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Doc Engine App | Turn2Law</title>
+<meta name="description" content="Generate, review, sign and download legal documents in minutes.">
+<link rel="icon" href="turn2law-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TURN2LAW: Design System — matches index.html / docengine.html
+   ============================================================ */
+:root{
+  --gold:#D8AB5B;--gold-deep:#B98F42;--gold-text:#8A6A2E;
+  --gold-soft:rgba(216,171,91,.14);
+  --ink:#111111;--navy:#0A1628;--navy-2:#0E1D33;
+  --gray:#6F6F6F;--gray-2:#9A9A9A;
+  --line:#EAEAEA;--line-soft:#F1F1F1;
+  --bg:#FFFFFF;--bg-tint:#FBFAF7;
+  --glass:rgba(255,255,255,.65);--glass-line:rgba(255,255,255,.7);
+  --shadow-sm:0 2px 10px rgba(17,17,17,.05);
+  --shadow-md:0 12px 34px rgba(17,17,17,.09);
+  --shadow-lg:0 30px 70px rgba(17,17,17,.14);
+  --shadow-gold:0 18px 50px rgba(216,171,91,.30);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --maxw:1200px;--r:22px;--r-lg:28px;
+  --sidebar:280px;
+  --nav-h:72px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:var(--gold);color:#fff}
+:focus-visible{outline:2px solid var(--gold-deep);outline-offset:3px;border-radius:8px}
+.skip-link{position:fixed;top:10px;left:10px;z-index:200;background:var(--ink);color:#fff;
+  padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;
+  transform:translateY(-160%);transition:transform .25s var(--ease)}
+.skip-link:focus{transform:none}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;font-weight:700;letter-spacing:-.02em;margin:0}
+</style>
+<style>
+/* ============ Buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-weight:600;font-size:15px;padding:14px 26px;border-radius:100px;
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease),background .3s,color .3s;
+  position:relative;white-space:nowrap;will-change:transform;}
+.btn svg{width:17px;height:17px}
+.btn-gold{background:var(--ink);color:#fff;box-shadow:var(--shadow-sm)}
+.btn-gold::after{content:"";position:absolute;inset:0;border-radius:100px;
+  background:linear-gradient(120deg,var(--gold),var(--gold-deep));
+  opacity:0;transition:opacity .35s var(--ease);z-index:-1;}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:var(--shadow-gold);color:#111}
+.btn-gold:hover::after{opacity:1}
+.btn-gold{z-index:0;overflow:hidden}
+.btn-ghost{background:rgba(255,255,255,.5);color:var(--ink);border:1px solid var(--line);backdrop-filter:blur(8px)}
+.btn-ghost:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:var(--shadow-md)}
+.btn-sm{padding:10px 18px;font-size:13px}
+.btn-sm svg{width:14px;height:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  padding-left:max(14px,env(safe-area-inset-left));
+  padding-right:max(14px,env(safe-area-inset-right));
+  transition:transform .5s var(--ease),background .4s,box-shadow .4s,border-color .4s;}
+.nav-inner{max-width:var(--maxw);margin:14px auto;padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  border-radius:100px;transition:all .4s var(--ease);border:1px solid transparent;}
+.nav.scrolled .nav-inner{background:var(--glass);backdrop-filter:blur(18px) saturate(1.6);
+  border-color:rgba(17,17,17,.06);box-shadow:0 10px 40px rgba(17,17,17,.07);}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;
+  font-weight:700;font-size:18px;letter-spacing:-.02em;}
+.brand-logo{height:26px;width:auto;display:block;object-fit:contain}
+.brand b{color:var(--gold-deep)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--gray);padding:9px 15px;
+  border-radius:100px;transition:color .25s,background .25s;}
+.nav-links a:hover{color:var(--ink);background:rgba(17,17,17,.04)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.nav-login{font-size:14px;font-weight:600;color:var(--ink);padding:9px 14px}
+.nav-login:hover{color:var(--gold-deep)}
+.burger{display:none;width:42px;height:42px;border-radius:12px;align-items:center;
+  justify-content:center;background:rgba(255,255,255,.6);border:1px solid var(--line)}
+.burger span{display:block;width:18px;height:2px;background:var(--ink);
+  position:relative;transition:.3s var(--ease)}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;
+  width:18px;height:2px;background:var(--ink);transition:.3s var(--ease)}
+.burger span::before{top:-6px}.burger span::after{top:6px}
+body.menu-open .burger span{background:transparent}
+body.menu-open .burger span::before{top:0;transform:rotate(45deg)}
+body.menu-open .burger span::after{top:0;transform:rotate(-45deg)}
+.progress-bar{position:fixed;top:0;left:0;height:2px;width:100%;transform-origin:0 50%;
+  transform:scaleX(0);background:linear-gradient(90deg,var(--gold),var(--gold-deep));z-index:101}
+.mobile-menu{position:fixed;inset:0;z-index:99;background:rgba(255,255,255,.9);
+  backdrop-filter:blur(24px);display:flex;flex-direction:column;justify-content:center;
+  gap:6px;overflow-y:auto;
+  padding:calc(24px + env(safe-area-inset-top,0px)) max(32px,env(safe-area-inset-right,0px))
+         calc(24px + env(safe-area-inset-bottom,0px)) max(32px,env(safe-area-inset-left,0px));
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-14px);
+  transition:opacity .45s var(--ease),transform .45s var(--ease),visibility .45s var(--ease);}
+body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.mobile-menu>a{font-family:'Poppins',sans-serif;font-weight:600;font-size:28px;
+  padding:10px 0;color:var(--ink);border-bottom:1px solid var(--line-soft)}
+.mobile-menu>a:last-of-type{border:none}
+.mobile-menu .mm-actions{margin-top:24px;display:flex;gap:12px}
+.mobile-menu .mm-actions .btn-gold{color:#fff}
+</style>
+<style>
+/* ============ APP LAYOUT ============ */
+.app-shell{display:flex;min-height:100vh;padding-top:var(--nav-h)}
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:var(--nav-h);bottom:0;width:var(--sidebar);
+  background:var(--bg);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;overflow-y:auto;z-index:50;
+  padding:32px 20px;}
+.sidebar-brand{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gray);margin-bottom:24px;padding-bottom:16px;
+  border-bottom:1px solid var(--line-soft);}
+.step-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
+.step-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;
+  cursor:default;transition:background .25s,color .25s;position:relative;}
+.step-item.done{cursor:pointer}
+.step-item.done:hover{background:var(--gold-soft)}
+.step-item.active{background:var(--gold-soft)}
+.step-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;flex:none;
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--gray);
+  transition:all .3s var(--ease);}
+.step-item.active .step-dot{border-color:var(--gold);background:var(--gold);color:#fff}
+.step-item.done .step-dot{border-color:var(--gold-deep);background:var(--gold-deep);color:#fff}
+.step-label{font-size:13.5px;font-weight:500;color:var(--gray);transition:color .25s}
+.step-item.active .step-label{color:var(--ink);font-weight:600}
+.step-item.done .step-label{color:var(--ink)}
+.step-conn{position:absolute;left:23px;top:36px;width:2px;height:calc(100% - 10px);
+  background:var(--line);z-index:-1}
+.step-item.done .step-conn,.step-item.active .step-conn{background:var(--gold-soft)}
+/* Main content area */
+.main-panel{margin-left:var(--sidebar);flex:1;min-width:0;
+  padding:40px max(24px,3vw) 80px;}
+.step-panel{display:none;animation:fadein .4s var(--ease)}
+.step-panel.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* Mobile progress strip */
+.mobile-progress{display:none;position:sticky;top:var(--nav-h);z-index:40;
+  background:var(--bg);border-bottom:1px solid var(--line);
+  padding:12px 16px;overflow-x:auto;gap:8px;white-space:nowrap;}
+.mp-step{display:inline-flex;align-items:center;gap:6px;font-size:12px;
+  font-family:'DM Mono',monospace;color:var(--gray);padding:6px 10px;
+  border-radius:100px;border:1px solid var(--line);transition:all .25s;}
+.mp-step.active{background:var(--gold-soft);border-color:var(--gold);color:var(--ink);font-weight:600}
+.mp-step.done{background:var(--gold-soft);border-color:var(--gold-deep);color:var(--gold-deep)}
+.mp-dot{width:7px;height:7px;border-radius:50%;background:var(--line);flex:none}
+.mp-step.active .mp-dot{background:var(--gold)}
+.mp-step.done .mp-dot{background:var(--gold-deep)}
+/* ============ STEP HEADERS ============ */
+.step-header{margin-bottom:32px}
+.step-number{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold-text);display:flex;align-items:center;gap:10px;}
+.step-number::before{content:"";width:22px;height:1px;background:var(--gold)}
+.step-title{font-family:'Poppins',sans-serif;font-weight:700;
+  font-size:clamp(22px,3vw,32px);letter-spacing:-.025em;margin:10px 0 8px}
+.step-desc{font-size:15px;color:var(--gray);line-height:1.6;max-width:560px}
+/* ============ DOC TYPE CARDS (Step 1) ============ */
+.doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.doc-card{border:1.5px solid var(--line);border-radius:var(--r);background:#fff;
+  padding:22px;cursor:pointer;transition:transform .4s var(--ease),box-shadow .4s,border-color .4s;
+  position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;}
+.doc-card::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(120% 80% at 100% 0%,var(--gold-soft),transparent 55%);
+  opacity:0;transition:opacity .4s var(--ease);}
+.doc-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-gold);border-color:transparent}
+.doc-card:hover::before{opacity:1}
+.doc-card.selected{border-color:var(--gold);background:var(--gold-soft);transform:translateY(-4px);box-shadow:var(--shadow-gold)}
+.doc-card.selected::before{opacity:1}
+.doc-card-ico{width:44px;height:44px;border-radius:12px;background:var(--bg-tint);
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  transition:.4s var(--ease);flex:none;}
+.doc-card-ico svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.7}
+.doc-card:hover .doc-card-ico,.doc-card.selected .doc-card-ico{
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));border-color:transparent}
+.doc-card:hover .doc-card-ico svg,.doc-card.selected .doc-card-ico svg{stroke:#fff}
+.doc-card-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;letter-spacing:-.01em}
+.doc-card-desc{font-size:13px;color:var(--gray);line-height:1.5;flex:1}
+.doc-card-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;
+  padding:3px 9px;border-radius:100px;background:var(--bg-tint);border:1px solid var(--line);
+  color:var(--gray);align-self:flex-start;margin-top:auto;}
+.doc-card.selected .doc-card-badge{background:rgba(216,171,91,.25);border-color:var(--gold);color:var(--gold-text)}
+.doc-card-loading{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray)}
+.skeleton{background:linear-gradient(90deg,var(--line) 25%,var(--line-soft) 50%,var(--line) 75%);
+  background-size:400% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+</style>
+<style>
+/* ============ INPUT METHOD CARDS (Step 2) ============ */
+.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}
+.method-card{border:1.5px solid var(--line);border-radius:var(--r);background:#fff;
+  padding:22px;cursor:pointer;transition:all .35s var(--ease);position:relative;}
+.method-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow-gold)}
+.method-card.selected{border-color:var(--gold);background:var(--gold-soft)}
+.method-card-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.method-card-ico{width:38px;height:38px;border-radius:10px;background:var(--bg-tint);
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none}
+.method-card-ico svg{width:19px;height:19px;stroke:var(--ink);fill:none;stroke-width:1.7}
+.method-card.selected .method-card-ico{background:var(--gold);border-color:var(--gold)}
+.method-card.selected .method-card-ico svg{stroke:#fff}
+.method-card-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px}
+.method-card-desc{font-size:13px;color:var(--gray);line-height:1.5}
+.method-rec{position:absolute;top:12px;right:12px;font-family:'DM Mono',monospace;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:100px;background:var(--gold-soft);
+  border:1px solid rgba(216,171,91,.35);color:var(--gold-text);}
+/* Upload zone */
+.upload-zone{border:2px dashed var(--line);border-radius:var(--r);
+  padding:40px 24px;text-align:center;cursor:pointer;transition:all .3s var(--ease);
+  background:var(--bg-tint);margin-bottom:16px}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--gold);background:var(--gold-soft)}
+.upload-zone-ico{width:48px;height:48px;border-radius:14px;background:#fff;
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;}
+.upload-zone-ico svg{width:22px;height:22px;stroke:var(--gray);fill:none;stroke-width:1.7}
+.upload-zone-text{font-size:14px;color:var(--gray);line-height:1.5}
+.upload-zone-text strong{color:var(--ink);display:block;margin-bottom:4px}
+.upload-zone-browse{color:var(--gold-deep);font-weight:600;cursor:pointer;text-decoration:underline}
+.upload-file-input{display:none}
+.classify-result{display:flex;align-items:center;gap:12px;padding:14px 16px;
+  border-radius:12px;margin-bottom:16px;font-size:14px;}
+.classify-result.success{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
+.classify-result.error{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.classify-result svg{width:18px;height:18px;flex:none}
+/* ============ FORM (Step 3) ============ */
+.form-section{margin-bottom:28px}
+.form-section-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;
+  padding-bottom:12px;border-bottom:1px solid var(--line-soft);}
+.form-section-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:16px}
+.form-section-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;
+  padding:2px 8px;border-radius:100px;background:var(--bg-tint);
+  border:1px solid var(--line);color:var(--gray);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:13px;font-weight:600;color:var(--ink)}
+.field label .req{color:#B4231B;margin-left:2px}
+.field input,.field textarea,.field select{
+  font-family:inherit;font-size:14.5px;padding:12px 14px;
+  border-radius:12px;border:1px solid var(--line);
+  background:#fff;color:var(--ink);transition:.3s var(--ease);width:100%;}
+.field textarea{resize:vertical;min-height:80px}
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none;border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-soft)}
+.field input.invalid,.field textarea.invalid{border-color:#B4231B;
+  box-shadow:0 0 0 3px rgba(180,35,27,.1)}
+.field-err{font-size:12px;color:#B4231B;font-weight:500;display:none}
+.field-err.show{display:block}
+.collapsible-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;
+  padding:12px 14px;border-radius:12px;background:var(--bg-tint);
+  border:1px solid var(--line);margin-bottom:12px;transition:all .25s;width:100%;text-align:left;}
+.collapsible-toggle:hover{border-color:var(--gold);background:var(--gold-soft)}
+.collapsible-toggle svg{width:16px;height:16px;stroke:var(--gray);fill:none;
+  stroke-width:2;transition:transform .3s var(--ease)}
+.collapsible-toggle.open svg{transform:rotate(180deg)}
+.collapsible-content{overflow:hidden;max-height:0;transition:max-height .5s var(--ease)}
+.collapsible-content.open{max-height:2000px}
+.draft-notice{display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border-radius:12px;background:rgba(216,171,91,.08);border:1px solid rgba(216,171,91,.3);
+  font-size:13px;color:var(--gold-text);margin-bottom:20px;}
+.draft-notice svg{width:16px;height:16px;stroke:var(--gold-deep);fill:none;stroke-width:2;flex:none}
+</style>
+<style>
+/* ============ BRANDING (Step 4) ============ */
+.brand-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.brand-card{border:1.5px solid var(--line);border-radius:var(--r);background:#fff;
+  padding:22px;cursor:pointer;transition:all .35s var(--ease);}
+.brand-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.brand-card.selected{border-color:var(--gold);background:var(--gold-soft)}
+.brand-card-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.brand-card-ico{width:38px;height:38px;border-radius:10px;background:var(--bg-tint);
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:none}
+.brand-card-ico svg{width:19px;height:19px;stroke:var(--ink);fill:none;stroke-width:1.7}
+.brand-card.selected .brand-card-ico{background:var(--gold);border-color:var(--gold)}
+.brand-card.selected .brand-card-ico svg{stroke:#fff}
+.brand-card-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px}
+.brand-card-desc{font-size:13px;color:var(--gray);line-height:1.5}
+.custom-brand-section{display:none;margin-top:16px}
+.custom-brand-section.visible{display:block}
+.asset-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.asset-upload{border:1.5px dashed var(--line);border-radius:16px;padding:18px;
+  cursor:pointer;transition:all .3s var(--ease);background:var(--bg-tint);position:relative;}
+.asset-upload:hover,.asset-upload.drag-over{border-color:var(--gold);background:var(--gold-soft)}
+.asset-upload-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;
+  display:flex;align-items:center;gap:6px}
+.asset-upload-label .req{color:#B4231B}
+.asset-upload-sub{font-size:11.5px;color:var(--gray);margin-bottom:10px}
+.asset-preview{display:flex;align-items:center;gap:10px;margin-top:10px;
+  padding:8px 12px;background:#fff;border-radius:10px;border:1px solid var(--line)}
+.asset-preview img{max-height:60px;max-width:80px;border-radius:6px;object-fit:contain}
+.asset-preview-info{flex:1;min-width:0}
+.asset-preview-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asset-preview-size{font-size:11px;color:var(--gray);font-family:'DM Mono',monospace}
+.asset-remove{width:24px;height:24px;border-radius:6px;background:var(--line);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;
+  transition:background .2s;}
+.asset-remove:hover{background:#FECACA}
+.asset-remove svg{width:12px;height:12px;stroke:var(--gray);fill:none;stroke-width:2}
+.brand-profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+/* ============ REVIEW (Step 5) ============ */
+.review-doc-type{border:1.5px solid var(--gold);border-radius:var(--r);
+  padding:18px 20px;background:var(--gold-soft);margin-bottom:24px;
+  display:flex;align-items:center;gap:14px;}
+.review-doc-type-ico{width:40px;height:40px;border-radius:10px;
+  background:var(--gold);display:flex;align-items:center;justify-content:center;flex:none}
+.review-doc-type-ico svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.7}
+.review-doc-type-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:16px}
+.review-doc-type-sub{font-size:13px;color:var(--gray-2);font-family:'DM Mono',monospace;margin-top:2px}
+.review-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.review-field{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.review-field.full{grid-column:1/-1}
+.review-field-key{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;
+  letter-spacing:.08em;font-family:'DM Mono',monospace;margin-bottom:4px}
+.review-field-val{font-size:14px;color:var(--ink);line-height:1.4}
+.review-field-val.empty{color:var(--gray-2);font-style:italic}
+.review-branding-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
+  border-radius:100px;font-size:13px;font-weight:600;
+  background:var(--gold-soft);border:1px solid rgba(216,171,91,.4);color:var(--gold-text);}
+/* ============ GENERATE (Step 6) ============ */
+.gen-timeline{max-width:480px;margin:0 auto 32px;display:flex;flex-direction:column;gap:0}
+.gen-step{display:flex;align-items:flex-start;gap:14px;padding:14px 0;position:relative}
+.gen-step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  flex:none;transition:all .4s var(--ease);z-index:1;}
+.gen-step.active .gen-step-dot{border-color:var(--gold);background:var(--gold)}
+.gen-step.done .gen-step-dot{border-color:var(--gold-deep);background:var(--gold-deep)}
+.gen-step.done .gen-step-dot::after{content:"✓";color:#fff;font-size:12px;font-weight:700}
+.gen-step.active .gen-step-dot::after{content:"";width:8px;height:8px;border-radius:50%;
+  background:#fff;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
+.gen-step-conn{position:absolute;left:13px;top:28px;width:2px;height:100%;background:var(--line)}
+.gen-step.done .gen-step-conn{background:var(--gold-deep)}
+.gen-step:last-child .gen-step-conn{display:none}
+.gen-step-text{padding-top:4px}
+.gen-step-label{font-size:14px;font-weight:500;color:var(--gray);transition:color .3s}
+.gen-step.active .gen-step-label{color:var(--ink);font-weight:600}
+.gen-step.done .gen-step-label{color:var(--gold-deep)}
+.gen-progress-bar{height:6px;border-radius:100px;background:var(--line);overflow:hidden;
+  max-width:480px;margin:0 auto 32px;}
+.gen-progress-fill{height:100%;border-radius:100px;width:0;
+  background:linear-gradient(90deg,var(--gold),var(--gold-deep));
+  transition:width .6s var(--ease);}
+.gen-error{border:1px solid #FECACA;border-radius:var(--r);background:#FEF2F2;
+  padding:24px;max-width:480px;margin:0 auto;display:none}
+.gen-error h3{font-size:16px;color:#991B1B;margin-bottom:8px}
+.gen-error p{font-size:14px;color:#7F1D1D;line-height:1.5;margin:0 0 16px}
+</style>
+<style>
+/* ============ PDF PREVIEW (Step 7) ============ */
+.pdf-frame-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);
+  margin-bottom:20px;background:#525659;}
+.pdf-frame-wrap iframe{display:block;width:100%;height:70vh;border:none}
+.pdf-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  padding:16px;background:var(--bg-tint);border:1px solid var(--line);
+  border-radius:var(--r);}
+.pdf-toolbar-spacer{flex:1}
+/* ============ SIGNATURE (Step 8) ============ */
+.sign-form{max-width:600px}
+.sign-form .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.password-wrap{position:relative}
+.password-wrap input{padding-right:44px}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;padding:4px;
+  display:flex;align-items:center;justify-content:center;}
+.pw-toggle svg{width:16px;height:16px;stroke:var(--gray);fill:none;stroke-width:1.7}
+.cert-validation-result{border-radius:12px;padding:14px 16px;margin:12px 0;
+  font-size:14px;display:flex;align-items:center;gap:10px;display:none;}
+.cert-validation-result.show{display:flex}
+.cert-validation-result.valid{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
+.cert-validation-result.invalid{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.cert-validation-result svg{width:18px;height:18px;flex:none}
+.sign-toggle-wrap{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:8px}
+.sign-toggle-label{font-size:14px;font-weight:500}
+.toggle-switch{position:relative;width:42px;height:24px}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--line);border-radius:100px;
+  cursor:pointer;transition:.3s var(--ease);}
+.toggle-slider::before{content:"";position:absolute;height:18px;width:18px;
+  left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s var(--ease);}
+.toggle-switch input:checked + .toggle-slider{background:var(--gold)}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(18px)}
+.sign-success{display:none;align-items:center;gap:12px;padding:16px 18px;
+  border-radius:var(--r);background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;
+  font-size:15px;font-weight:600;margin-top:16px}
+.sign-success.show{display:flex}
+.sign-success svg{width:22px;height:22px;stroke:#166534;fill:none;stroke-width:2;flex:none}
+/* ============ DOWNLOAD (Step 9) ============ */
+.download-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.dl-card{border:1.5px solid var(--line);border-radius:var(--r);padding:26px;
+  background:#fff;display:flex;flex-direction:column;gap:14px;transition:all .35s var(--ease);}
+.dl-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.dl-card.signed{border-color:rgba(34,197,94,.35);background:#F0FDF4}
+.dl-card-ico{width:44px;height:44px;border-radius:12px;background:var(--bg-tint);
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;}
+.dl-card-ico svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.7}
+.dl-card.signed .dl-card-ico{background:#DCFCE7;border-color:#BBF7D0}
+.dl-card.signed .dl-card-ico svg{stroke:#16A34A}
+.dl-card-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:16px}
+.dl-card-sub{font-size:13px;color:var(--gray)}
+.dl-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+  padding:3px 9px;border-radius:100px;background:#DCFCE7;color:#16A34A;border:1px solid #BBF7D0}
+.doc-meta-panel{border:1px solid var(--line);border-radius:var(--r);
+  background:var(--bg-tint);padding:20px 22px;margin-bottom:24px;}
+.doc-meta-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;
+  margin-bottom:14px;color:var(--ink)}
+.doc-meta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.meta-row{display:flex;flex-direction:column;gap:3px}
+.meta-key{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;
+  letter-spacing:.08em;font-family:'DM Mono',monospace}
+.meta-val{font-size:14px;color:var(--ink)}
+/* ============ TOAST SYSTEM ============ */
+.toast-container{position:fixed;top:24px;right:24px;z-index:999;
+  display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:360px;}
+.toast{background:#fff;border-radius:14px;box-shadow:var(--shadow-lg);
+  padding:14px 16px;display:flex;align-items:center;gap:12px;
+  font-size:14px;pointer-events:auto;border-left:4px solid;
+  animation:toastin .4s var(--ease) both;max-width:360px;min-width:260px;}
+.toast.removing{animation:toastout .35s var(--ease) forwards}
+@keyframes toastin{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes toastout{to{opacity:0;transform:translateX(30px)}}
+.toast.success{border-left-color:#22C55E}.toast.error{border-left-color:#EF4444}
+.toast.info{border-left-color:var(--gold)}
+.toast-ico{width:20px;height:20px;flex:none}
+.toast.success .toast-ico{stroke:#22C55E}.toast.error .toast-ico{stroke:#EF4444}
+.toast.info .toast-ico{stroke:var(--gold)}
+.toast-msg{flex:1;line-height:1.45}
+.toast-close{width:22px;height:22px;border-radius:6px;background:var(--line);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;
+  border:none;transition:background .2s;}
+.toast-close:hover{background:#d4d4d8}
+.toast-close svg{width:12px;height:12px;stroke:var(--gray);fill:none;stroke-width:2}
+/* ============ SPINNER ============ */
+.spinner{width:20px;height:20px;border:2px solid var(--line);
+  border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ============ ACTION ROW ============ */
+.action-row{display:flex;align-items:center;gap:12px;margin-top:32px;flex-wrap:wrap}
+.action-row .spacer{flex:1}
+/* ============ SECTION DIVIDER ============ */
+.sec-divider{height:1px;background:var(--line-soft);margin:28px 0}
+/* ============ RESPONSIVE ============ */
+@media(max-width:1000px){
+  .sidebar{display:none}
+  .main-panel{margin-left:0}
+  .mobile-progress{display:flex}
+  .doc-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:680px){
+  .doc-grid{grid-template-columns:1fr}
+  .method-grid{grid-template-columns:1fr}
+  .brand-cards{grid-template-columns:1fr}
+  .review-fields-grid{grid-template-columns:1fr}
+  .download-cards{grid-template-columns:1fr}
+  .sign-form .form-grid{grid-template-columns:1fr}
+  .asset-upload-grid{grid-template-columns:1fr}
+  .brand-profile-fields{grid-template-columns:1fr}
+  .doc-meta-grid{grid-template-columns:1fr}
+  .action-row{flex-direction:column;align-items:stretch}
+  .action-row .spacer{display:none}
+}
+@media(max-width:900px){
+  .nav-links{display:none}
+  .nav-cta .btn{display:none}
+  .burger{display:flex}
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="progress-bar" id="progressBar" role="progressbar" aria-hidden="true"></div>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="brand" aria-label="Turn2Law home">
+      <img src="turn2law-logo.png" alt="Turn2Law" class="brand-logo">
+      Turn2<b>Law</b>
+    </a>
+    <div class="nav-links" role="list">
+      <a href="legal-services.html" role="listitem">Legal Services</a>
+      <a href="docengine.html" role="listitem">Doc Engine</a>
+      <a href="introspector.html" role="listitem">Introspector</a>
+      <a href="resources.html" role="listitem">Resources</a>
+    </div>
+    <div class="nav-cta">
+      <a href="login.html" class="nav-login">Log in</a>
+      <a href="signup.html" class="btn btn-gold btn-sm" aria-label="Get started with Turn2Law">
+        Get Started
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <button class="burger" id="burgerBtn" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" role="dialog" aria-modal="true">
+  <a href="legal-services.html">Legal Services</a>
+  <a href="docengine.html">Doc Engine</a>
+  <a href="introspector.html">Introspector</a>
+  <a href="resources.html">Resources</a>
+  <div class="mm-actions">
+    <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+    <a href="signup.html" class="btn btn-gold btn-sm">Get Started</a>
+  </div>
+</div>
+
+<!-- Mobile Progress Strip -->
+<div class="mobile-progress" id="mobileProgress" role="navigation" aria-label="Wizard steps"></div>
+
+<!-- ===== APP SHELL ===== -->
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" aria-label="Wizard progress" role="navigation">
+    <div class="sidebar-brand">Document Engine</div>
+    <ol class="step-list" id="stepList" aria-label="Steps">
+      <li class="step-item active" data-step="1" role="listitem">
+        <div class="step-dot" aria-current="step">1</div>
+        <span class="step-label">Select Type</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="2" role="listitem">
+        <div class="step-dot">2</div>
+        <span class="step-label">Input Method</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="3" role="listitem">
+        <div class="step-dot">3</div>
+        <span class="step-label">Fill Form</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="4" role="listitem">
+        <div class="step-dot">4</div>
+        <span class="step-label">Branding</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="5" role="listitem">
+        <div class="step-dot">5</div>
+        <span class="step-label">Review</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="6" role="listitem">
+        <div class="step-dot">6</div>
+        <span class="step-label">Generate</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="7" role="listitem">
+        <div class="step-dot">7</div>
+        <span class="step-label">Preview</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="8" role="listitem">
+        <div class="step-dot">8</div>
+        <span class="step-label">Sign</span>
+        <div class="step-conn" aria-hidden="true"></div>
+      </li>
+      <li class="step-item" data-step="9" role="listitem">
+        <div class="step-dot">9</div>
+        <span class="step-label">Download</span>
+      </li>
+    </ol>
+  </aside>
+
+  <!-- Main Panel -->
+  <main class="main-panel" id="main-content" aria-live="polite">
+
+    <!-- ===== STEP 1: SELECT DOCUMENT TYPE ===== -->
+    <section class="step-panel active" id="panel-1" aria-labelledby="step1-title">
+      <div class="step-header">
+        <div class="step-number">Step 1 of 9</div>
+        <h1 class="step-title" id="step1-title">Select Document Type</h1>
+        <p class="step-desc">Choose the type of legal document you want to generate.</p>
+      </div>
+      <div class="doc-grid" id="docGrid" role="radiogroup" aria-label="Document types">
+        <div class="doc-card-loading">
+          <div class="spinner" style="margin:0 auto 12px"></div>
+          <p style="font-size:14px;color:var(--gray)">Loading templates…</p>
+        </div>
+      </div>
+      <div class="action-row">
+        <span class="spacer"></span>
+        <button class="btn btn-gold" id="step1Next" disabled onclick="goToStep(2)"
+          aria-describedby="step1-hint">
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <p id="step1-hint" style="font-size:12px;color:var(--gray);margin-top:8px;text-align:right">Select a document type to continue</p>
+    </section>
+
+    <!-- ===== STEP 2: INPUT METHOD ===== -->
+    <section class="step-panel" id="panel-2" aria-labelledby="step2-title">
+      <div class="step-header">
+        <div class="step-number">Step 2 of 9</div>
+        <h2 class="step-title" id="step2-title">Choose Input Method</h2>
+        <p class="step-desc">How would you like to provide the document details?</p>
+      </div>
+      <div class="method-grid" role="radiogroup" aria-label="Input methods">
+        <div class="method-card selected" data-method="form" role="radio" aria-checked="true" tabindex="0"
+          onclick="selectMethod('form')" onkeydown="if(event.key==='Enter'||event.key===' ')selectMethod('form')">
+          <div class="method-card-head">
+            <div class="method-card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <span class="method-card-title">Generate from Form</span>
+          </div>
+          <p class="method-card-desc">Fill in fields manually to generate your document with precise control over every detail.</p>
+          <span class="method-rec">Recommended</span>
+        </div>
+        <div class="method-card" data-method="pdf" role="radio" aria-checked="false" tabindex="0"
+          onclick="selectMethod('pdf')" onkeydown="if(event.key==='Enter'||event.key===' ')selectMethod('pdf')">
+          <div class="method-card-head">
+            <div class="method-card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <span class="method-card-title">Upload PDF</span>
+          </div>
+          <p class="method-card-desc">Upload an existing PDF — we'll classify and pre-fill the form fields automatically.</p>
+        </div>
+        <div class="method-card" data-method="docx" role="radio" aria-checked="false" tabindex="0"
+          onclick="selectMethod('docx')" onkeydown="if(event.key==='Enter'||event.key===' ')selectMethod('docx')">
+          <div class="method-card-head">
+            <div class="method-card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+            </div>
+            <span class="method-card-title">Upload DOCX</span>
+          </div>
+          <p class="method-card-desc">Upload a Word document — we'll extract, classify, and pre-fill the fields for you.</p>
+        </div>
+        <div class="method-card" data-method="image" role="radio" aria-checked="false" tabindex="0"
+          onclick="selectMethod('image')" onkeydown="if(event.key==='Enter'||event.key===' ')selectMethod('image')">
+          <div class="method-card-head">
+            <div class="method-card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <span class="method-card-title">Upload Image (OCR)</span>
+          </div>
+          <p class="method-card-desc">Upload a scanned document or image — OCR will extract and classify the text automatically.</p>
+        </div>
+      </div>
+
+      <!-- Upload zone for file methods -->
+      <div id="uploadZoneWrap" style="display:none">
+        <div class="upload-zone" id="classifyDropZone" role="button" tabindex="0"
+          aria-label="Drop file here or click to browse"
+          onclick="document.getElementById('classifyFileInput').click()"
+          onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('classifyFileInput').click()">
+          <div class="upload-zone-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          </div>
+          <div class="upload-zone-text">
+            <strong>Drop your file here</strong>
+            or <span class="upload-zone-browse">browse files</span>
+          </div>
+          <p style="font-size:12px;color:var(--gray-2);margin:8px 0 0" id="classifyAcceptHint">Accepts PDF files</p>
+        </div>
+        <input type="file" class="upload-file-input" id="classifyFileInput" aria-label="Upload file for classification" onchange="handleClassifyFile(this.files[0])">
+        <div id="classifyResult"></div>
+        <div id="classifySpinner" style="display:none;text-align:center;padding:20px 0">
+          <div class="spinner" style="margin:0 auto 10px"></div>
+          <p style="font-size:14px;color:var(--gray)">Classifying document…</p>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-ghost btn-sm" onclick="goToStep(1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <span class="spacer"></span>
+        <button class="btn btn-gold" id="step2Next" onclick="goToStep(3)">
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3: FILL FORM ===== -->
+    <section class="step-panel" id="panel-3" aria-labelledby="step3-title">
+      <div class="step-header">
+        <div class="step-number">Step 3 of 9</div>
+        <h2 class="step-title" id="step3-title">Fill in the Details</h2>
+        <p class="step-desc">Complete the required fields for your document. Optional fields are collapsed below.</p>
+      </div>
+      <div id="draftNotice" class="draft-notice" style="display:none">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>
+        Draft found — <button onclick="loadFormDraft()" style="background:none;border:none;color:var(--gold-deep);font-weight:600;font-size:13px;cursor:pointer;padding:0;margin-left:4px">Load saved data</button>
+        <button onclick="document.getElementById('draftNotice').style.display='none'" style="background:none;border:none;color:var(--gray);font-size:11px;cursor:pointer;margin-left:auto">Dismiss</button>
+      </div>
+      <div id="formContainer">
+        <div style="text-align:center;padding:60px 0">
+          <div class="spinner" style="margin:0 auto 12px"></div>
+          <p style="font-size:14px;color:var(--gray)">Loading form schema…</p>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost btn-sm" onclick="goToStep(2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <span class="spacer"></span>
+        <button class="btn btn-gold" id="step3Next" onclick="validateAndGoStep4()">
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 4: BRANDING ===== -->
+    <section class="step-panel" id="panel-4" aria-labelledby="step4-title">
+      <div class="step-header">
+        <div class="step-number">Step 4 of 9</div>
+        <h2 class="step-title" id="step4-title">Choose Branding</h2>
+        <p class="step-desc">Select whether to use Turn2Law's standard letterhead or upload your own company branding.</p>
+      </div>
+      <div class="brand-cards" role="radiogroup" aria-label="Branding options">
+        <div class="brand-card selected" data-brand="turn2law" role="radio" aria-checked="true" tabindex="0"
+          onclick="selectBranding('turn2law')" onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('turn2law')">
+          <div class="brand-card-head">
+            <div class="brand-card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <span class="brand-card-title">Turn2Law Branding</span>
+          </div>
+          <p class="brand-card-desc">Standard Turn2Law letterhead with professional Indian legal document formatting. No setup required.</p>
+        </div>
+        <div class="brand-card" data-brand="custom" role="radio" aria-checked="false" tabindex="0"
+          onclick="selectBranding('custom')" onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('custom')">
+          <div class="brand-card-head">
+            <div class="brand-card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            </div>
+            <span class="brand-card-title">Custom Company Branding</span>
+          </div>
+          <p class="brand-card-desc">Upload your own header, footer, watermark, and logo for a fully branded document.</p>
+        </div>
+      </div>
+
+      <!-- Custom branding fields -->
+      <div class="custom-brand-section" id="customBrandSection">
+        <div class="asset-upload-grid">
+          <div class="asset-upload" id="assetHeader" role="button" tabindex="0"
+            aria-label="Upload header image"
+            onclick="triggerAssetUpload('header')"
+            onkeydown="if(event.key==='Enter'||event.key===' ')triggerAssetUpload('header')">
+            <div class="asset-upload-label">Header Image <span class="req">*</span></div>
+            <div class="asset-upload-sub">PNG only · ≥595px wide · ≤150px tall</div>
+            <div id="assetPreview-header" style="display:none" class="asset-preview"></div>
+            <div id="assetPlaceholder-header" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Click or drop to upload
+            </div>
+            <input type="file" accept="image/png" class="upload-file-input" id="assetInput-header" onchange="handleAssetUpload('header',this.files[0])">
+          </div>
+          <div class="asset-upload" id="assetFooter" role="button" tabindex="0"
+            aria-label="Upload footer image"
+            onclick="triggerAssetUpload('footer')"
+            onkeydown="if(event.key==='Enter'||event.key===' ')triggerAssetUpload('footer')">
+            <div class="asset-upload-label">Footer Image</div>
+            <div class="asset-upload-sub">PNG only (optional)</div>
+            <div id="assetPreview-footer" style="display:none" class="asset-preview"></div>
+            <div id="assetPlaceholder-footer" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Click or drop to upload
+            </div>
+            <input type="file" accept="image/png" class="upload-file-input" id="assetInput-footer" onchange="handleAssetUpload('footer',this.files[0])">
+          </div>
+          <div class="asset-upload" id="assetWatermark" role="button" tabindex="0"
+            aria-label="Upload watermark image"
+            onclick="triggerAssetUpload('watermark')"
+            onkeydown="if(event.key==='Enter'||event.key===' ')triggerAssetUpload('watermark')">
+            <div class="asset-upload-label">Watermark Image</div>
+            <div class="asset-upload-sub">PNG only (optional)</div>
+            <div id="assetPreview-watermark" style="display:none" class="asset-preview"></div>
+            <div id="assetPlaceholder-watermark" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Click or drop to upload
+            </div>
+            <input type="file" accept="image/png" class="upload-file-input" id="assetInput-watermark" onchange="handleAssetUpload('watermark',this.files[0])">
+          </div>
+          <div class="asset-upload" id="assetLogo" role="button" tabindex="0"
+            aria-label="Upload logo image"
+            onclick="triggerAssetUpload('logo')"
+            onkeydown="if(event.key==='Enter'||event.key===' ')triggerAssetUpload('logo')">
+            <div class="asset-upload-label">Logo Image</div>
+            <div class="asset-upload-sub">PNG only (optional)</div>
+            <div id="assetPreview-logo" style="display:none" class="asset-preview"></div>
+            <div id="assetPlaceholder-logo" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Click or drop to upload
+            </div>
+            <input type="file" accept="image/png" class="upload-file-input" id="assetInput-logo" onchange="handleAssetUpload('logo',this.files[0])">
+          </div>
+        </div>
+        <div class="brand-profile-fields">
+          <div class="field">
+            <label for="brandCompanyName">Company Name <span class="req">*</span></label>
+            <input type="text" id="brandCompanyName" placeholder="e.g. Acme Legal Solutions" aria-required="true"
+              oninput="autoProfileId(this.value)">
+          </div>
+          <div class="field">
+            <label for="brandProfileId">Profile ID</label>
+            <input type="text" id="brandProfileId" placeholder="auto-generated" aria-label="Brand profile ID (auto-generated from company name)">
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-ghost btn-sm" onclick="goToStep(3)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <span class="spacer"></span>
+        <button class="btn btn-gold" onclick="validateAndGoStep5()">
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 5: REVIEW ===== -->
+    <section class="step-panel" id="panel-5" aria-labelledby="step5-title">
+      <div class="step-header">
+        <div class="step-number">Step 5 of 9</div>
+        <h2 class="step-title" id="step5-title">Review &amp; Confirm</h2>
+        <p class="step-desc">Check everything before generating. Go back to edit if needed.</p>
+      </div>
+      <div id="reviewContent"></div>
+      <div class="action-row">
+        <button class="btn btn-ghost btn-sm" onclick="goToStep(3)" aria-label="Edit fields">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Edit Fields
+        </button>
+        <span class="spacer"></span>
+        <button class="btn btn-gold" onclick="goToStep(6)">
+          Continue to Generate
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 6: GENERATE ===== -->
+    <section class="step-panel" id="panel-6" aria-labelledby="step6-title">
+      <div class="step-header">
+        <div class="step-number">Step 6 of 9</div>
+        <h2 class="step-title" id="step6-title">Generating Document</h2>
+        <p class="step-desc">Sit tight — your document is being rendered with XeLaTeX.</p>
+      </div>
+      <div class="gen-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="genProgressBar" aria-label="Generation progress">
+        <div class="gen-progress-fill" id="genProgressFill"></div>
+      </div>
+      <div class="gen-timeline" id="genTimeline" aria-live="polite">
+        <div class="gen-step" id="gstep-0">
+          <div class="gen-step-dot" aria-hidden="true"></div>
+          <div class="gen-step-conn" aria-hidden="true"></div>
+          <div class="gen-step-text"><div class="gen-step-label">Validating fields…</div></div>
+        </div>
+        <div class="gen-step" id="gstep-1">
+          <div class="gen-step-dot" aria-hidden="true"></div>
+          <div class="gen-step-conn" aria-hidden="true"></div>
+          <div class="gen-step-text"><div class="gen-step-label">Loading template…</div></div>
+        </div>
+        <div class="gen-step" id="gstep-2">
+          <div class="gen-step-dot" aria-hidden="true"></div>
+          <div class="gen-step-conn" aria-hidden="true"></div>
+          <div class="gen-step-text"><div class="gen-step-label">Applying branding…</div></div>
+        </div>
+        <div class="gen-step" id="gstep-3">
+          <div class="gen-step-dot" aria-hidden="true"></div>
+          <div class="gen-step-conn" aria-hidden="true"></div>
+          <div class="gen-step-text"><div class="gen-step-label">Rendering XeLaTeX…</div></div>
+        </div>
+        <div class="gen-step" id="gstep-4">
+          <div class="gen-step-dot" aria-hidden="true"></div>
+          <div class="gen-step-conn" aria-hidden="true"></div>
+          <div class="gen-step-text"><div class="gen-step-label">Generating PDF…</div></div>
+        </div>
+        <div class="gen-step" id="gstep-5">
+          <div class="gen-step-dot" aria-hidden="true"></div>
+          <div class="gen-step-text"><div class="gen-step-label">Done ✓</div></div>
+        </div>
+      </div>
+      <div class="gen-error" id="genError" role="alert">
+        <h3>Generation Failed</h3>
+        <p id="genErrorMsg"></p>
+        <button class="btn btn-gold btn-sm" onclick="generateDocument()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Try Again
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 7: PDF PREVIEW ===== -->
+    <section class="step-panel" id="panel-7" aria-labelledby="step7-title">
+      <div class="step-header">
+        <div class="step-number">Step 7 of 9</div>
+        <h2 class="step-title" id="step7-title">Preview Document</h2>
+        <p class="step-desc">Review the generated PDF before signing or downloading.</p>
+      </div>
+      <div class="pdf-frame-wrap" id="pdfFrameWrap">
+        <iframe id="pdfFrame" title="Generated PDF preview" aria-label="PDF preview" loading="lazy"></iframe>
+      </div>
+      <div class="pdf-toolbar" role="toolbar" aria-label="PDF actions">
+        <button class="btn btn-ghost btn-sm" id="btnOpenTab" onclick="openPdfTab()" aria-label="Open PDF in new tab">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open in New Tab
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="printPdf()" aria-label="Print PDF">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="goToStep(6)" aria-label="Regenerate document">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Regenerate
+        </button>
+        <div class="pdf-toolbar-spacer"></div>
+        <button class="btn btn-ghost btn-sm" id="btnDlUnsigned" onclick="downloadPdf(false)" aria-label="Download unsigned PDF">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Unsigned
+        </button>
+        <button class="btn btn-gold btn-sm" onclick="goToStep(8)" aria-label="Sign this document">
+          Sign this document →
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 8: DIGITAL SIGNATURE ===== -->
+    <section class="step-panel" id="panel-8" aria-labelledby="step8-title">
+      <div class="step-header">
+        <div class="step-number">Step 8 of 9</div>
+        <h2 class="step-title" id="step8-title">Digital Signature</h2>
+        <p class="step-desc">Apply a PKCS#12 digital signature to your document.</p>
+      </div>
+      <form class="sign-form" id="signForm" onsubmit="return false" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="signerName">Signer Name <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="signerName" placeholder="Full legal name" required aria-required="true">
+            <span class="field-err" id="signerNameErr">Signer name is required</span>
+          </div>
+          <div class="field">
+            <label for="signerEmail">Contact Email</label>
+            <input type="email" id="signerEmail" placeholder="signer@example.com" aria-label="Contact email (optional)">
+          </div>
+          <div class="field full">
+            <label>Certificate File <span class="req" aria-hidden="true">*</span></label>
+            <div class="upload-zone" id="certDropZone" style="padding:20px 18px"
+              role="button" tabindex="0" aria-label="Upload certificate file (.pfx or .p12)"
+              onclick="document.getElementById('certFileInput').click()"
+              onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('certFileInput').click()">
+              <div style="display:flex;align-items:center;gap:10px;justify-content:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                <span id="certFileLabel" style="font-size:14px;color:var(--gray)">Drop .pfx or .p12 certificate, or <span style="color:var(--gold-deep);font-weight:600">browse</span></span>
+              </div>
+            </div>
+            <input type="file" class="upload-file-input" id="certFileInput" accept=".pfx,.p12" aria-label="Certificate file" onchange="handleCertFile(this.files[0])">
+            <span class="field-err" id="certFileErr" style="margin-top:6px">Certificate file is required</span>
+          </div>
+          <div class="field">
+            <label for="certPassword">Certificate Password <span class="req" aria-hidden="true">*</span></label>
+            <div class="password-wrap">
+              <input type="password" id="certPassword" placeholder="Certificate password" required aria-required="true">
+              <button type="button" class="pw-toggle" onclick="togglePw('certPassword',this)" aria-label="Show/hide password">
+                <svg id="pwEye" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="field-err" id="certPasswordErr">Password is required</span>
+          </div>
+          <div class="field">
+            <label for="signReason">Reason</label>
+            <input type="text" id="signReason" placeholder="Digitally approved" aria-label="Signing reason (optional, default: Digitally approved)">
+          </div>
+          <div class="field">
+            <label for="signLocation">Location</label>
+            <input type="text" id="signLocation" placeholder="India" aria-label="Signing location (optional, default: India)">
+          </div>
+        </div>
+        <div class="sign-toggle-wrap" style="margin-top:16px">
+          <span class="sign-toggle-label">Visible Signature Stamp</span>
+          <label class="toggle-switch" aria-label="Toggle visible signature stamp">
+            <input type="checkbox" id="visibleSig" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-ghost btn-sm" id="validateCertBtn" onclick="validateCert()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Validate Certificate
+          </button>
+        </div>
+        <div class="cert-validation-result" id="certValidationResult" role="status" aria-live="polite"></div>
+        <div class="sign-success" id="signSuccessBanner" role="status">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Signature Applied Successfully
+        </div>
+        <div class="action-row">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="goToStep(7)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Preview
+          </button>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="goToStep(9)">Skip</button>
+          <button type="button" class="btn btn-gold" id="applySignBtn" disabled onclick="signDocument()">
+            Apply Signature
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== STEP 9: DOWNLOAD ===== -->
+    <section class="step-panel" id="panel-9" aria-labelledby="step9-title">
+      <div class="step-header">
+        <div class="step-number">Step 9 of 9</div>
+        <h2 class="step-title" id="step9-title">Download Your Document</h2>
+        <p class="step-desc">Your document is ready. Download the unsigned or signed version below.</p>
+      </div>
+      <div class="download-cards">
+        <div class="dl-card">
+          <div class="dl-card-ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div>
+            <div class="dl-card-title" id="dlUnsignedTitle">Document</div>
+            <div class="dl-card-sub" id="dlUnsignedMeta">Generated document</div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="downloadPdf(false)" aria-label="Download unsigned PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </button>
+        </div>
+        <div class="dl-card" id="dlSignedCard">
+          <div class="dl-card-ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="dl-card-title">Signed PDF</div>
+            <div class="dl-card-sub" id="dlSignedMeta">Sign the document to enable download</div>
+            <div id="dlSignedBadge" style="display:none;margin-top:6px">
+              <span class="dl-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Digitally Signed
+              </span>
+            </div>
+          </div>
+          <button class="btn btn-gold btn-sm" id="dlSignedBtn" disabled onclick="downloadPdf(true)" aria-label="Download signed PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Signed
+          </button>
+        </div>
+      </div>
+      <div class="doc-meta-panel">
+        <div class="doc-meta-title">Document Metadata</div>
+        <div class="doc-meta-grid">
+          <div class="meta-row"><div class="meta-key">Generation Date</div><div class="meta-val" id="metaDate">—</div></div>
+          <div class="meta-row"><div class="meta-key">Document Type</div><div class="meta-val" id="metaType">—</div></div>
+          <div class="meta-row"><div class="meta-key">Branding Mode</div><div class="meta-val" id="metaBranding">—</div></div>
+          <div class="meta-row"><div class="meta-key">Signature Status</div><div class="meta-val" id="metaSig">Unsigned</div></div>
+          <div class="meta-row"><div class="meta-key">Document ID</div><div class="meta-val" id="metaDocId" style="font-family:'DM Mono',monospace;font-size:12px">—</div></div>
+        </div>
+      </div>
+      <div class="action-row">
+        <span class="spacer"></span>
+        <button class="btn btn-ghost btn-sm" onclick="goToStep(8)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>
+          Sign Document
+        </button>
+        <button class="btn btn-gold" onclick="resetApp()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Generate Another Document
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer" aria-live="assertive" aria-atomic="true"></div>
+
+<script>
+'use strict';
+/* ============================================================
+   TURN2LAW DOC ENGINE — App State & Config
+   ============================================================ */
+const API = 'http://localhost:8000';
+
+const ICONS = {
+  'user-plus': `<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>`,
+  'shield':    `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>`,
+  'briefcase': `<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>`,
+  'file-text': `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>`,
+  'handshake': `<path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/>`,
+  'cpu':       `<rect x="9" y="9" width="6" height="6"/><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><line x1="9" y1="2" x2="9" y2="9"/><line x1="15" y1="2" x2="15" y2="9"/><line x1="9" y1="15" x2="9" y2="22"/><line x1="15" y1="15" x2="15" y2="22"/><line x1="2" y1="9" x2="9" y2="9"/><line x1="2" y1="15" x2="9" y2="15"/><line x1="15" y1="9" x2="22" y2="9"/><line x1="15" y1="15" x2="22" y2="15"/>`,
+  'file':      `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>`,
+};
+
+function svgIcon(key) {
+  const d = ICONS[key] || ICONS['file'];
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">${d}</svg>`;
+}
+
+/* ---- App State ---- */
+const state = {
+  currentStep: 1,
+  selectedDocType: null,
+  selectedDocMeta: null,
+  inputMethod: 'form',
+  formData: {},
+  schemaRequired: [],
+  schemaOptional: [],
+  brandingMode: 'turn2law',
+  brandAssets: {},
+  brandProfileId: null,
+  brandProfileName: null,
+  docId: null,
+  pdfUrl: null,
+  signedPdfUrl: null,
+  signerName: null,
+  certFile: null,
+  certValidated: false,
+  generatedAt: null,
+};
+
+let autoSaveTimer = null;
+const DRAFT_KEY = 't2l_draft';
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function goToStep(n) {
+  const prev = state.currentStep;
+  state.currentStep = n;
+  // hide previous, show next
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + n);
+  if (panel) panel.classList.add('active');
+  // update sidebar
+  updateSidebar(n);
+  updateMobileProgress(n);
+  // step entry hooks
+  if (n === 3 && (!state.schemaRequired.length)) loadSchema(state.selectedDocType);
+  if (n === 5) renderReview();
+  if (n === 6) generateDocument();
+  if (n === 7) loadPdfPreview();
+  if (n === 9) populateDownloadPage();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // focus management
+  const titleEl = document.querySelector('#panel-' + n + ' .step-title');
+  if (titleEl) { titleEl.setAttribute('tabindex', '-1'); titleEl.focus(); }
+}
+
+function updateSidebar(current) {
+  document.querySelectorAll('.step-item').forEach(item => {
+    const s = parseInt(item.dataset.step);
+    item.classList.remove('active', 'done');
+    if (s === current) item.classList.add('active');
+    else if (s < current) {
+      item.classList.add('done');
+      item.addEventListener('click', () => goToStep(s), { once: true });
+    }
+    // update aria
+    const dot = item.querySelector('.step-dot');
+    if (dot) dot.setAttribute('aria-current', s === current ? 'step' : '');
+  });
+}
+
+function updateMobileProgress(current) {
+  const strip = document.getElementById('mobileProgress');
+  if (!strip) return;
+  const steps = ['Select', 'Method', 'Form', 'Brand', 'Review', 'Generate', 'Preview', 'Sign', 'Download'];
+  strip.innerHTML = steps.map((label, i) => {
+    const n = i + 1;
+    const cls = n === current ? 'active' : n < current ? 'done' : '';
+    return `<button class="mp-step ${cls}" onclick="goToStep(${n})" aria-label="Step ${n}: ${label}"${n > current ? ' disabled' : ''}>
+      <span class="mp-dot"></span>${n}. ${label}
+    </button>`;
+  }).join('');
+}
+
+/* ============================================================
+   STEP 1 — LOAD TEMPLATES
+   ============================================================ */
+async function loadTemplates() {
+  const grid = document.getElementById('docGrid');
+  try {
+    const res = await fetch(`${API}/api/templates`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const templates = await res.json();
+    renderDocCards(templates);
+  } catch (e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 0">
+      <p style="color:#B4231B;font-size:14px">Could not load templates: ${e.message}</p>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="loadTemplates()">Retry</button>
+    </div>`;
+    showToast('Failed to load templates. Is the server running?', 'error');
+  }
+}
+
+function renderDocCards(templates) {
+  const grid = document.getElementById('docGrid');
+  if (!templates.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;color:var(--gray);padding:40px 0;text-align:center">No templates found.</div>';
+    return;
+  }
+  grid.innerHTML = templates.map(t => {
+    const total = (t.required_fields || []).length + (t.optional_fields || []).length;
+    return `<div class="doc-card" role="radio" aria-checked="false" tabindex="0"
+      data-doctype="${t.id}" data-docname="${t.name}"
+      onclick="selectDocType('${t.id}','${t.name.replace(/'/g,"\\'")}',this)"
+      onkeydown="if(event.key==='Enter'||event.key===' ')selectDocType('${t.id}','${t.name.replace(/'/g,"\\'")}',this)"
+      aria-label="${t.name}: ${t.description}">
+      <div class="doc-card-ico">${svgIcon(t.icon)}</div>
+      <div class="doc-card-name">${t.name}</div>
+      <div class="doc-card-desc">${t.description}</div>
+      <div class="doc-card-badge">${total} fields</div>
+    </div>`;
+  }).join('');
+}
+
+function selectDocType(id, name, el) {
+  state.selectedDocType = id;
+  state.selectedDocMeta = { id, name };
+  document.querySelectorAll('.doc-card').forEach(c => {
+    c.classList.remove('selected');
+    c.setAttribute('aria-checked', 'false');
+  });
+  el.classList.add('selected');
+  el.setAttribute('aria-checked', 'true');
+  document.getElementById('step1Next').disabled = false;
+  document.getElementById('step1-hint').style.display = 'none';
+}
+</script>
+<script>
+/* ============================================================
+   STEP 2 — INPUT METHOD
+   ============================================================ */
+function selectMethod(method) {
+  state.inputMethod = method;
+  document.querySelectorAll('.method-card').forEach(c => {
+    c.classList.remove('selected');
+    c.setAttribute('aria-checked', 'false');
+  });
+  const card = document.querySelector(`.method-card[data-method="${method}"]`);
+  if (card) { card.classList.add('selected'); card.setAttribute('aria-checked', 'true'); }
+  const uploadWrap = document.getElementById('uploadZoneWrap');
+  const hint = document.getElementById('classifyAcceptHint');
+  if (method === 'form') {
+    uploadWrap.style.display = 'none';
+  } else {
+    uploadWrap.style.display = 'block';
+    const accepts = { pdf: 'Accepts PDF files', docx: 'Accepts DOCX files', image: 'Accepts PNG, JPEG, TIFF images' };
+    const mimeMap = { pdf: '.pdf', docx: '.docx,.doc', image: '.png,.jpg,.jpeg,.tiff,.tif' };
+    hint.textContent = accepts[method] || '';
+    document.getElementById('classifyFileInput').setAttribute('accept', mimeMap[method] || '');
+    document.getElementById('classifyResult').innerHTML = '';
+  }
+}
+
+async function handleClassifyFile(file) {
+  if (!file) return;
+  const spinner = document.getElementById('classifySpinner');
+  const result = document.getElementById('classifyResult');
+  result.innerHTML = '';
+  spinner.style.display = 'block';
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const res = await fetch(`${API}/api/classify`, { method: 'POST', body: fd });
+    const data = await res.json();
+    spinner.style.display = 'none';
+    if (data.doc_type) {
+      result.innerHTML = `<div class="classify-result success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Detected: <strong>${data.doc_type.replace(/_/g,' ')}</strong>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;margin-left:6px;color:inherit;opacity:.7">${data.confidence} confidence</span></span>
+      </div>`;
+      // Pre-select this type if different
+      state.selectedDocType = data.doc_type;
+      state.selectedDocMeta = { id: data.doc_type, name: data.doc_type.replace(/_/g,' ') };
+      showToast(`Detected: ${data.doc_type.replace(/_/g,' ')}. Proceeding to form.`, 'success');
+      // Reset schema so it reloads
+      state.schemaRequired = []; state.schemaOptional = [];
+      setTimeout(() => goToStep(3), 1200);
+    } else {
+      throw new Error(data.error || 'Classification failed');
+    }
+  } catch (e) {
+    spinner.style.display = 'none';
+    result.innerHTML = `<div class="classify-result error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <span>${e.message}</span>
+    </div>`;
+    showToast(e.message, 'error');
+  }
+}
+
+// Drag and drop on classify zone
+(function(){
+  const zone = document.getElementById('classifyDropZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) handleClassifyFile(f);
+  });
+})();
+
+/* ============================================================
+   STEP 3 — SCHEMA & FORM
+   ============================================================ */
+async function loadSchema(docType) {
+  if (!docType) { showToast('Please select a document type first.', 'error'); goToStep(1); return; }
+  const container = document.getElementById('formContainer');
+  container.innerHTML = `<div style="text-align:center;padding:60px 0">
+    <div class="spinner" style="margin:0 auto 12px"></div>
+    <p style="font-size:14px;color:var(--gray)">Loading form schema…</p>
+  </div>`;
+  try {
+    const res = await fetch(`${API}/api/schema/${encodeURIComponent(docType)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const schema = await res.json();
+    state.schemaRequired = schema.required || [];
+    state.schemaOptional = schema.optional || [];
+    renderForm();
+    checkForDraft();
+  } catch (e) {
+    container.innerHTML = `<div style="text-align:center;padding:40px 0">
+      <p style="color:#B4231B;font-size:14px">Failed to load schema: ${e.message}</p>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="loadSchema('${docType}')">Retry</button>
+    </div>`;
+    showToast('Failed to load form schema.', 'error');
+  }
+}
+
+function renderForm() {
+  const container = document.getElementById('formContainer');
+  const req = state.schemaRequired;
+  const opt = state.schemaOptional;
+  let html = '';
+  // Required section
+  if (req.length) {
+    html += `<div class="form-section">
+      <div class="form-section-head">
+        <span class="form-section-title">Required Fields</span>
+        <span class="form-section-badge">${req.length} fields</span>
+      </div>
+      <div class="form-grid" id="reqGrid">${req.map(f => renderField(f, true)).join('')}</div>
+    </div>`;
+  }
+  // Optional section (collapsible)
+  if (opt.length) {
+    html += `<div class="form-section">
+      <button class="collapsible-toggle" id="optToggle" onclick="toggleOptional()" aria-expanded="false" aria-controls="optGrid">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        <span class="form-section-title">Optional Fields</span>
+        <span class="form-section-badge">${opt.length} available</span>
+      </button>
+      <div class="collapsible-content" id="optCollapse">
+        <div class="form-grid" id="optGrid">${opt.map(f => renderField(f, false)).join('')}</div>
+      </div>
+    </div>`;
+  }
+  container.innerHTML = html;
+  // Attach auto-save listeners
+  container.querySelectorAll('input,textarea').forEach(el => {
+    el.addEventListener('input', () => {
+      state.formData[el.dataset.key] = el.value;
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(saveFormDraft, 500);
+    });
+  });
+  // Restore any existing formData
+  restoreFormValues();
+}
+
+function renderField(f, required) {
+  const isTextarea = f.type === 'textarea';
+  const tag = isTextarea ? 'textarea' : 'input';
+  const attrs = isTextarea ? `rows="3"` : `type="text"`;
+  const req = required ? '<span class="req" aria-hidden="true">*</span>' : '';
+  const fullClass = (isTextarea) ? ' full' : '';
+  return `<div class="field${fullClass}">
+    <label for="field-${f.key}">${f.label} ${req}</label>
+    ${isTextarea
+      ? `<textarea id="field-${f.key}" data-key="${f.key}" placeholder="${esc(f.placeholder)}"${required ? ' required aria-required="true"' : ''} aria-label="${esc(f.label)}"></textarea>`
+      : `<input id="field-${f.key}" data-key="${f.key}" placeholder="${esc(f.placeholder)}"${required ? ' required aria-required="true"' : ''} aria-label="${esc(f.label)}">`
+    }
+    <span class="field-err" id="err-${f.key}">This field is required</span>
+  </div>`;
+}
+
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function toggleOptional() {
+  const btn = document.getElementById('optToggle');
+  const col = document.getElementById('optCollapse');
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  col.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+
+function validateAndGoStep4() {
+  const req = state.schemaRequired;
+  let valid = true;
+  req.forEach(f => {
+    const el = document.getElementById('field-' + f.key);
+    const errEl = document.getElementById('err-' + f.key);
+    if (!el) return;
+    const val = el.value.trim();
+    state.formData[f.key] = val;
+    if (!val) {
+      valid = false;
+      el.classList.add('invalid');
+      if (errEl) errEl.classList.add('show');
+    } else {
+      el.classList.remove('invalid');
+      if (errEl) errEl.classList.remove('show');
+    }
+  });
+  // Also collect optional fields
+  state.schemaOptional.forEach(f => {
+    const el = document.getElementById('field-' + f.key);
+    if (el && el.value.trim()) state.formData[f.key] = el.value.trim();
+  });
+  if (!valid) {
+    showToast('Please fill in all required fields.', 'error');
+    const firstInvalid = document.querySelector('.field input.invalid, .field textarea.invalid');
+    if (firstInvalid) firstInvalid.focus();
+    return;
+  }
+  goToStep(4);
+}
+
+function restoreFormValues() {
+  Object.entries(state.formData).forEach(([key, val]) => {
+    const el = document.getElementById('field-' + key);
+    if (el) el.value = val;
+  });
+}
+
+/* ---- Draft persistence ---- */
+function saveFormDraft() {
+  try {
+    localStorage.setItem(DRAFT_KEY + '_' + state.selectedDocType, JSON.stringify(state.formData));
+  } catch(e) {}
+}
+
+function loadFormDraft() {
+  try {
+    const saved = localStorage.getItem(DRAFT_KEY + '_' + state.selectedDocType);
+    if (saved) {
+      state.formData = JSON.parse(saved);
+      restoreFormValues();
+      showToast('Draft loaded.', 'info');
+      document.getElementById('draftNotice').style.display = 'none';
+    }
+  } catch(e) {}
+}
+
+function checkForDraft() {
+  try {
+    const saved = localStorage.getItem(DRAFT_KEY + '_' + state.selectedDocType);
+    if (saved) document.getElementById('draftNotice').style.display = 'flex';
+  } catch(e) {}
+}
+</script>
+<script>
+/* ============================================================
+   STEP 4 — BRANDING
+   ============================================================ */
+function selectBranding(mode) {
+  state.brandingMode = mode;
+  document.querySelectorAll('.brand-card').forEach(c => {
+    c.classList.remove('selected');
+    c.setAttribute('aria-checked', 'false');
+  });
+  const card = document.querySelector(`.brand-card[data-brand="${mode}"]`);
+  if (card) { card.classList.add('selected'); card.setAttribute('aria-checked', 'true'); }
+  const sec = document.getElementById('customBrandSection');
+  sec.classList.toggle('visible', mode === 'custom');
+}
+
+function triggerAssetUpload(assetKey) {
+  document.getElementById('assetInput-' + assetKey).click();
+}
+
+function handleAssetUpload(assetKey, file) {
+  if (!file) return;
+  if (!file.type.includes('png')) {
+    showToast('Only PNG files are accepted.', 'error'); return;
+  }
+  state.brandAssets[assetKey] = file;
+  const preview = document.getElementById('assetPreview-' + assetKey);
+  const placeholder = document.getElementById('assetPlaceholder-' + assetKey);
+  const url = URL.createObjectURL(file);
+  const sizeKb = (file.size / 1024).toFixed(1);
+  preview.innerHTML = `
+    <img src="${url}" alt="${assetKey} preview" style="max-height:60px;max-width:80px;border-radius:6px;object-fit:contain">
+    <div class="asset-preview-info">
+      <div class="asset-preview-name">${file.name}</div>
+      <div class="asset-preview-size">${sizeKb} KB</div>
+    </div>
+    <button class="asset-remove" onclick="removeAsset('${assetKey}')" aria-label="Remove ${assetKey} image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  preview.style.display = 'flex';
+  placeholder.style.display = 'none';
+}
+
+function removeAsset(assetKey) {
+  delete state.brandAssets[assetKey];
+  document.getElementById('assetPreview-' + assetKey).style.display = 'none';
+  document.getElementById('assetPlaceholder-' + assetKey).style.display = 'flex';
+  document.getElementById('assetInput-' + assetKey).value = '';
+}
+
+function autoProfileId(name) {
+  const id = name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+  state.brandProfileId = id;
+  state.brandProfileName = name;
+  document.getElementById('brandProfileId').value = id;
+}
+
+// Setup drag-and-drop for asset zones
+['header','footer','watermark','logo'].forEach(key => {
+  const zone = document.getElementById('asset' + key.charAt(0).toUpperCase() + key.slice(1));
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) handleAssetUpload(key, f);
+  });
+});
+
+function validateAndGoStep5() {
+  if (state.brandingMode === 'custom') {
+    if (!state.brandAssets.header) {
+      showToast('Header image is required for custom branding.', 'error'); return;
+    }
+    const companyName = document.getElementById('brandCompanyName').value.trim();
+    if (!companyName) {
+      showToast('Company name is required for custom branding.', 'error');
+      document.getElementById('brandCompanyName').focus(); return;
+    }
+    state.brandProfileName = companyName;
+    state.brandProfileId = document.getElementById('brandProfileId').value.trim() || companyName.toLowerCase().replace(/\W+/g,'_');
+  }
+  goToStep(5);
+}
+
+/* ============================================================
+   STEP 5 — REVIEW
+   ============================================================ */
+function renderReview() {
+  const container = document.getElementById('reviewContent');
+  const docName = state.selectedDocMeta ? state.selectedDocMeta.name : state.selectedDocType;
+  const docIcon = svgIcon((state.selectedDocMeta && state.selectedDocMeta.icon) || 'file-text');
+  // Doc type card
+  let html = `<div class="review-doc-type" role="status" aria-label="Selected document type: ${docName}">
+    <div class="review-doc-type-ico">${svgIcon('file-text')}</div>
+    <div>
+      <div class="review-doc-type-name">${docName}</div>
+      <div class="review-doc-type-sub">${state.selectedDocType}</div>
+    </div>
+  </div>`;
+  // Fields grid
+  html += `<h3 style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px">Fields</h3>
+  <div class="review-fields-grid">`;
+  const allFields = [...state.schemaRequired, ...state.schemaOptional];
+  allFields.forEach(f => {
+    const val = state.formData[f.key] || '';
+    const isLong = f.type === 'textarea';
+    html += `<div class="review-field${isLong ? ' full' : ''}">
+      <div class="review-field-key">${f.label}</div>
+      <div class="review-field-val${val ? '' : ' empty'}">${val ? val : 'Not provided'}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  // Branding
+  const brandLabel = state.brandingMode === 'custom'
+    ? `Custom — ${state.brandProfileName || 'Company Branding'}`
+    : 'Turn2Law Standard';
+  html += `<div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:14px;font-weight:600;color:var(--ink)">Branding:</span>
+    <span class="review-branding-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      ${brandLabel}
+    </span>
+  </div>`;
+  container.innerHTML = html;
+}
+
+/* ============================================================
+   STEP 6 — GENERATE
+   ============================================================ */
+const GEN_STEPS_TIMES = [200, 500, 500, 4000, 500, 300];
+const GEN_STEPS_PCT = [10, 25, 40, 85, 95, 100];
+
+async function generateDocument() {
+  // Reset UI
+  document.getElementById('genError').style.display = 'none';
+  for (let i = 0; i < 6; i++) {
+    const el = document.getElementById('gstep-' + i);
+    if (el) el.className = 'gen-step';
+  }
+  setGenProgress(0);
+
+  // Run animated steps 0-2 immediately
+  await animateGenStep(0, GEN_STEPS_PCT[0], GEN_STEPS_TIMES[0]);
+  await animateGenStep(1, GEN_STEPS_PCT[1], GEN_STEPS_TIMES[1]);
+  await animateGenStep(2, GEN_STEPS_PCT[2], GEN_STEPS_TIMES[2]);
+
+  // Step 3 — actual API call
+  setGenStepActive(3);
+  setGenProgress(GEN_STEPS_PCT[2]);
+
+  try {
+    const result = await callGenerateAPI();
+    if (!result.success) throw new Error(result.error || 'Generation failed');
+    state.docId = result.doc_id;
+    state.pdfUrl = result.pdf_url;
+    state.generatedAt = new Date().toISOString();
+    completeGenStep(3);
+    setGenProgress(GEN_STEPS_PCT[3]);
+    await animateGenStep(4, GEN_STEPS_PCT[4], GEN_STEPS_TIMES[4]);
+    await animateGenStep(5, GEN_STEPS_PCT[5], GEN_STEPS_TIMES[5]);
+    // Auto-advance
+    setTimeout(() => goToStep(7), 500);
+  } catch (e) {
+    // Mark step 3 as failed
+    const el = document.getElementById('gstep-3');
+    if (el) {
+      const dot = el.querySelector('.gen-step-dot');
+      if (dot) { dot.style.borderColor = '#EF4444'; dot.style.background = '#EF4444'; dot.textContent = '✕'; }
+    }
+    document.getElementById('genError').style.display = 'block';
+    document.getElementById('genErrorMsg').textContent = e.message;
+    showToast('Generation failed: ' + e.message, 'error');
+  }
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function animateGenStep(i, pct, ms) {
+  setGenStepActive(i);
+  await delay(ms);
+  completeGenStep(i);
+  setGenProgress(pct);
+}
+
+function setGenStepActive(i) {
+  const el = document.getElementById('gstep-' + i);
+  if (el) el.className = 'gen-step active';
+}
+function completeGenStep(i) {
+  const el = document.getElementById('gstep-' + i);
+  if (el) el.className = 'gen-step done';
+}
+function setGenProgress(pct) {
+  const fill = document.getElementById('genProgressFill');
+  const bar = document.getElementById('genProgressBar');
+  if (fill) fill.style.width = pct + '%';
+  if (bar) bar.setAttribute('aria-valuenow', pct);
+}
+
+async function callGenerateAPI() {
+  if (state.brandingMode === 'custom') {
+    const fd = new FormData();
+    fd.append('doc_type', state.selectedDocType);
+    fd.append('fields_json', JSON.stringify(state.formData));
+    fd.append('profile_id', state.brandProfileId || 'custom');
+    fd.append('profile_name', state.brandProfileName || 'Custom');
+    if (state.brandAssets.header) fd.append('header_image', state.brandAssets.header);
+    if (state.brandAssets.footer) fd.append('footer_image', state.brandAssets.footer);
+    if (state.brandAssets.watermark) fd.append('watermark_image', state.brandAssets.watermark);
+    if (state.brandAssets.logo) fd.append('logo_image', state.brandAssets.logo);
+    const res = await fetch(`${API}/api/generate-with-branding`, { method: 'POST', body: fd });
+    return res.json();
+  } else {
+    const res = await fetch(`${API}/api/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ doc_type: state.selectedDocType, fields: state.formData }),
+    });
+    return res.json();
+  }
+}
+</script>
+<script>
+/* ============================================================
+   STEP 7 — PDF PREVIEW
+   ============================================================ */
+function loadPdfPreview() {
+  if (!state.pdfUrl) return;
+  const frame = document.getElementById('pdfFrame');
+  frame.src = `${API}${state.pdfUrl}`;
+}
+
+function openPdfTab() {
+  if (state.pdfUrl) window.open(`${API}${state.pdfUrl}`, '_blank');
+}
+
+function printPdf() {
+  if (!state.pdfUrl) return;
+  const iframe = document.getElementById('pdfFrame');
+  try { iframe.contentWindow.print(); }
+  catch(e) { window.open(`${API}${state.pdfUrl}`, '_blank'); }
+}
+
+function downloadPdf(signed) {
+  const url = signed ? state.signedPdfUrl : state.pdfUrl;
+  if (!url) { showToast('No PDF available.', 'error'); return; }
+  const a = document.createElement('a');
+  a.href = `${API}${url}`;
+  const docType = state.selectedDocType || 'document';
+  a.download = signed ? `${docType}_signed.pdf` : `${docType}.pdf`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ============================================================
+   STEP 8 — DIGITAL SIGNATURE
+   ============================================================ */
+function handleCertFile(file) {
+  if (!file) return;
+  state.certFile = file;
+  state.certValidated = false;
+  document.getElementById('applySignBtn').disabled = true;
+  const result = document.getElementById('certValidationResult');
+  result.className = 'cert-validation-result';
+  result.innerHTML = '';
+  const label = document.getElementById('certFileLabel');
+  label.innerHTML = `<strong style="color:var(--ink)">${file.name}</strong> <span style="color:var(--gray);font-size:12px">(${(file.size/1024).toFixed(1)} KB)</span>`;
+  showToast('Certificate loaded. Click "Validate Certificate" to verify.', 'info');
+}
+
+// Drag-drop for cert zone
+(function(){
+  const zone = document.getElementById('certDropZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) { document.getElementById('certFileInput').files; handleCertFile(f); }
+  });
+})();
+
+function togglePw(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  const svg = btn.querySelector('svg');
+  svg.innerHTML = isHidden
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+}
+
+async function validateCert() {
+  if (!state.certFile) { showToast('Please upload a certificate file first.', 'error'); return; }
+  const pwd = document.getElementById('certPassword').value;
+  if (!pwd) { showToast('Please enter the certificate password.', 'error'); document.getElementById('certPassword').focus(); return; }
+  const btn = document.getElementById('validateCertBtn');
+  const result = document.getElementById('certValidationResult');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px"></div> Validating…`;
+  result.className = 'cert-validation-result'; result.innerHTML = '';
+  const fd = new FormData();
+  fd.append('cert_file', state.certFile);
+  fd.append('cert_password', pwd);
+  try {
+    const res = await fetch(`${API}/api/validate-cert`, { method: 'POST', body: fd });
+    const data = await res.json();
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Validate Certificate`;
+    if (data.valid) {
+      state.certValidated = true;
+      result.className = 'cert-validation-result valid show';
+      result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>✓ Certificate Valid — CN: <strong>${data.subject}</strong>, expires <strong>${data.expires}</strong></span>`;
+      document.getElementById('applySignBtn').disabled = false;
+      showToast('Certificate validated.', 'success');
+    } else {
+      state.certValidated = false;
+      result.className = 'cert-validation-result invalid show';
+      result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span>${data.error || 'Certificate validation failed'}</span>`;
+      showToast('Certificate invalid: ' + (data.error || 'unknown error'), 'error');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Validate Certificate`;
+    result.className = 'cert-validation-result invalid show';
+    result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${e.message}`;
+    showToast('Validation error: ' + e.message, 'error');
+  }
+}
+
+async function signDocument() {
+  const signerName = document.getElementById('signerName').value.trim();
+  let valid = true;
+  if (!signerName) {
+    valid = false;
+    document.getElementById('signerName').classList.add('invalid');
+    document.getElementById('signerNameErr').classList.add('show');
+  } else {
+    document.getElementById('signerName').classList.remove('invalid');
+    document.getElementById('signerNameErr').classList.remove('show');
+  }
+  if (!state.certFile) {
+    valid = false;
+    document.getElementById('certFileErr').classList.add('show');
+  } else {
+    document.getElementById('certFileErr').classList.remove('show');
+  }
+  if (!valid) return;
+  if (!state.certValidated) { showToast('Please validate the certificate first.', 'error'); return; }
+  if (!state.docId) { showToast('No document to sign. Please generate first.', 'error'); return; }
+
+  const btn = document.getElementById('applySignBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;margin-right:8px"></div> Signing PDF…`;
+
+  const fd = new FormData();
+  fd.append('doc_id', state.docId);
+  fd.append('cert_file', state.certFile);
+  fd.append('cert_password', document.getElementById('certPassword').value);
+  fd.append('signer_name', signerName);
+  const reason = document.getElementById('signReason').value.trim() || 'Digitally approved';
+  const location = document.getElementById('signLocation').value.trim() || 'India';
+  const contact = document.getElementById('signerEmail').value.trim();
+  fd.append('reason', reason);
+  fd.append('location', location);
+  if (contact) fd.append('contact', contact);
+  fd.append('visible', document.getElementById('visibleSig').checked ? 'true' : 'false');
+
+  try {
+    const res = await fetch(`${API}/api/sign`, { method: 'POST', body: fd });
+    const data = await res.json();
+    btn.disabled = false;
+    btn.innerHTML = `Apply Signature <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>`;
+    if (data.success) {
+      state.signedPdfUrl = data.signed_pdf_url;
+      state.signerName = signerName;
+      document.getElementById('signSuccessBanner').classList.add('show');
+      showToast('Document signed successfully!', 'success');
+      setTimeout(() => goToStep(9), 1200);
+    } else {
+      throw new Error(data.error || 'Signing failed');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = `Apply Signature <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>`;
+    showToast('Signing failed: ' + e.message, 'error');
+  }
+}
+</script>
+<script>
+/* ============================================================
+   STEP 9 — DOWNLOAD PAGE
+   ============================================================ */
+function populateDownloadPage() {
+  const docName = state.selectedDocMeta ? state.selectedDocMeta.name : state.selectedDocType;
+  // Unsigned card
+  document.getElementById('dlUnsignedTitle').textContent = docName;
+  const genDate = state.generatedAt ? new Date(state.generatedAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : '—';
+  document.getElementById('dlUnsignedMeta').textContent = `Generated ${genDate}`;
+  // Signed card
+  if (state.signedPdfUrl) {
+    const card = document.getElementById('dlSignedCard');
+    card.classList.add('signed');
+    const ico = card.querySelector('.dl-card-ico');
+    ico.style.background = '#DCFCE7'; ico.style.borderColor = '#BBF7D0';
+    ico.querySelector('svg').style.stroke = '#16A34A';
+    document.getElementById('dlSignedMeta').textContent = `Signed by: ${state.signerName || 'Signer'}`;
+    document.getElementById('dlSignedBadge').style.display = 'block';
+    document.getElementById('dlSignedBtn').disabled = false;
+    document.getElementById('metaSig').textContent = `Signed by ${state.signerName || 'Signer'}`;
+  }
+  // Metadata
+  document.getElementById('metaDate').textContent = genDate;
+  document.getElementById('metaType').textContent = docName;
+  document.getElementById('metaBranding').textContent = state.brandingMode === 'custom'
+    ? `Custom — ${state.brandProfileName || 'Company'}` : 'Turn2Law Standard';
+  document.getElementById('metaDocId').textContent = state.docId || '—';
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+function resetApp() {
+  Object.assign(state, {
+    currentStep: 1, selectedDocType: null, selectedDocMeta: null,
+    inputMethod: 'form', formData: {}, schemaRequired: [], schemaOptional: [],
+    brandingMode: 'turn2law', brandAssets: {}, brandProfileId: null, brandProfileName: null,
+    docId: null, pdfUrl: null, signedPdfUrl: null, signerName: null,
+    certFile: null, certValidated: false, generatedAt: null,
+  });
+  // Reset form UI
+  document.getElementById('formContainer').innerHTML = '';
+  document.getElementById('reviewContent').innerHTML = '';
+  document.getElementById('genError').style.display = 'none';
+  document.getElementById('draftNotice').style.display = 'none';
+  document.getElementById('step1Next').disabled = true;
+  document.querySelectorAll('.doc-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-checked','false'); });
+  // Reset signature form
+  ['signerName','certPassword','signReason','signLocation','signerEmail'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('certFileLabel').innerHTML = `Drop .pfx or .p12 certificate, or <span style="color:var(--gold-deep);font-weight:600">browse</span>`;
+  document.getElementById('certValidationResult').className = 'cert-validation-result';
+  document.getElementById('certValidationResult').innerHTML = '';
+  document.getElementById('applySignBtn').disabled = true;
+  document.getElementById('signSuccessBanner').classList.remove('show');
+  document.getElementById('dlSignedBtn').disabled = true;
+  document.getElementById('dlSignedBadge').style.display = 'none';
+  document.getElementById('metaSig').textContent = 'Unsigned';
+  // Reset branding
+  selectBranding('turn2law');
+  ['header','footer','watermark','logo'].forEach(k => {
+    const prev = document.getElementById('assetPreview-' + k);
+    const ph = document.getElementById('assetPlaceholder-' + k);
+    if (prev) prev.style.display = 'none';
+    if (ph) ph.style.display = 'flex';
+  });
+  document.getElementById('brandCompanyName').value = '';
+  document.getElementById('brandProfileId').value = '';
+  goToStep(1);
+}
+
+/* ============================================================
+   TOAST SYSTEM
+   ============================================================ */
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.setAttribute('role', 'alert');
+  const icons = {
+    success: `<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+    error:   `<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    info:    `<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>`,
+  };
+  toast.innerHTML = `${icons[type] || icons.info}
+    <span class="toast-msg">${msg}</span>
+    <button class="toast-close" onclick="removeToast(this.parentElement)" aria-label="Dismiss notification">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  container.appendChild(toast);
+  setTimeout(() => removeToast(toast), 3000);
+}
+
+function removeToast(toast) {
+  if (!toast || !toast.parentElement) return;
+  toast.classList.add('removing');
+  setTimeout(() => { if (toast.parentElement) toast.parentElement.removeChild(toast); }, 350);
+}
+
+/* ============================================================
+   NAV — scroll & mobile menu
+   ============================================================ */
+const nav = document.getElementById('nav');
+const pb = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
+
+const burger = document.getElementById('burgerBtn');
+if (burger) {
+  burger.addEventListener('click', () => {
+    const open = document.body.classList.toggle('menu-open');
+    burger.setAttribute('aria-expanded', String(open));
+    if (open) { const firstLink = document.querySelector('.mobile-menu a'); if (firstLink) firstLink.focus(); }
+  });
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.body.classList.contains('menu-open')) {
+    document.body.classList.remove('menu-open');
+    if (burger) burger.setAttribute('aria-expanded', 'false');
+    if (burger) burger.focus();
+  }
+});
+
+/* Step 7 PDF load is handled directly inside goToStep via the entry hook check */
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadTemplates();
+  updateMobileProgress(1);
+  updateSidebar(1);
+  // Nav scroll init
+  nav.classList.toggle('scrolled', window.scrollY > 10);
+});
+</script>
+
+</body>
+</html>

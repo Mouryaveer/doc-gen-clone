@@ -53,6 +53,7 @@ def render_latex(
     output_tex: str,
     output_pdf: str,
     values: dict,
+    preamble_path: str | None = None,
 ) -> None:
     """
     Render *template_path* with *values*, compile to PDF, and write the
@@ -70,6 +71,12 @@ def render_latex(
     values : dict
         Mapping of ``{{KEY}}`` placeholder names to replacement strings.
         Values are LaTeX-escaped before substitution.
+    preamble_path : str | None
+        Optional absolute path to a custom brand preamble .tex file
+        (supplied by the Branding Engine).  When provided, the
+        ``\\input{...brand_preamble...}`` token in the template is
+        replaced with a reference to this file.  When None (default),
+        existing behaviour is preserved.
     """
     template_path = os.path.abspath(template_path)
     output_tex    = os.path.abspath(output_tex)
@@ -102,9 +109,9 @@ def render_latex(
 
     # Also inject paths into the brand_preamble if it is being compiled
     # as a standalone file (it uses the same placeholders)
-    preamble_path = os.path.join(layouts_dir.rstrip("/"), "brand_preamble.tex")
-    if os.path.exists(preamble_path):
-        with open(preamble_path, "r", encoding="utf-8") as f:
+    _t2l_preamble_path = os.path.join(layouts_dir.rstrip("/"), "brand_preamble.tex")
+    if os.path.exists(_t2l_preamble_path):
+        with open(_t2l_preamble_path, "r", encoding="utf-8") as f:
             preamble = f.read()
         rendered_preamble = preamble.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
         rendered_preamble = rendered_preamble.replace("IMAGES_DIR_PLACEHOLDER", images_dir)
@@ -119,6 +126,77 @@ def render_latex(
             r"\input{" + layouts_dir + r"brand_preamble}",
             r"\input{" + layouts_dir + r"brand_preamble_rendered}",
         )
+
+    # If a custom preamble_path is supplied by the Branding Engine,
+    # the templates embed T2L assets directly in their preamble — there is no
+    # \input{brand_preamble} token to replace.  Instead we:
+    #   1. Strip the entire LaTeX preamble from the template (everything before
+    #      \begin{document}) and replace it with the custom brand preamble.
+    #   2. Substitute the T2L asset filenames inside \begin{document}...\end{document}
+    #      with the absolute paths of the custom profile's processed PNGs.
+    if preamble_path is not None:
+        import re as _re
+
+        _custom_preamble_abs = os.path.abspath(preamble_path)
+        _profile_dir = os.path.dirname(_custom_preamble_abs).replace("\\", "/") + "/"
+
+        # Read and render the custom preamble (inject font/image dir tokens)
+        with open(_custom_preamble_abs, "r", encoding="utf-8") as _fh:
+            _custom_preamble_tex = _fh.read()
+        _custom_preamble_tex = _custom_preamble_tex.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
+        _custom_preamble_tex = _custom_preamble_tex.replace("IMAGES_DIR_PLACEHOLDER", images_dir)
+
+        # Split template at \begin{document}
+        _split = tex.split(r"\begin{document}", 1)
+        if len(_split) == 2:
+            _doc_body = r"\begin{document}" + _split[1]
+
+            # Replace T2L asset filenames with custom profile absolute paths.
+            # The filenames appear as bare names inside \includegraphics{...}.
+            _header_png    = _profile_dir + "header.png"
+            _footer_png    = _profile_dir + "footer.png"
+            _watermark_png = _profile_dir + "watermark.png"
+            _logo_png      = _profile_dir + "logo.png"
+
+            # header_decoration (covers full-width top strip)
+            _doc_body = _re.sub(
+                r"\{header_decoration\b[^}]*\}",
+                "{" + _header_png + "}",
+                _doc_body,
+            )
+            # footer_decoration (covers full-width bottom strip)
+            _doc_body = _re.sub(
+                r"\{footer_decoration\b[^}]*\}",
+                "{" + _footer_png + "}",
+                _doc_body,
+            )
+            # watermark / logo centred on page (sample_asset_0_xref_36 or watermark_logo_n)
+            _doc_body = _re.sub(
+                r"\{sample_asset_0_xref_36\b[^}]*\}",
+                "{" + _watermark_png + "}",
+                _doc_body,
+            )
+            _doc_body = _re.sub(
+                r"\{watermark_logo_n\b[^}]*\}",
+                "{" + _watermark_png + "}",
+                _doc_body,
+            )
+            # logo (top-left, separate from watermark)
+            _doc_body = _re.sub(
+                r"\{footer_icon_xref47\b[^}]*\}",
+                "{" + _logo_png + "}",
+                _doc_body,
+            )
+
+            # Replace the geometry block in the template body with the one
+            # from the custom preamble (correct margins for this profile).
+            # We prepend \documentclass and then the full custom preamble.
+            _doc_class_match = _re.match(
+                r"(\s*\\documentclass[^\n]*\n)", tex
+            )
+            _doc_class = _doc_class_match.group(1) if _doc_class_match else "\\documentclass[10pt]{article}\n"
+
+            tex = _doc_class + "\n" + _custom_preamble_tex + "\n" + _doc_body
 
     # Replace all {{KEY}} placeholders with escaped values.
     # Optional fields not provided by the caller are replaced with empty string
