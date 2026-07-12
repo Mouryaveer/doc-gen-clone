@@ -486,7 +486,115 @@ async def generate_with_branding_endpoint(
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
-@app.post("/api/classify", summary="Classify an uploaded document")
+@app.post("/api/generate-with-letterhead", summary="Generate a PDF with a complete letterhead PNG")
+async def generate_with_letterhead_endpoint(
+    doc_type: str = Form(...),
+    fields_json: str = Form(...),
+    profile_id: str = Form(...),
+    profile_name: str = Form(...),
+    letterhead_image: UploadFile = File(..., description="Full-page A4 letterhead PNG"),
+) -> JSONResponse:
+    """
+    Generate a PDF using a single complete-letterhead PNG as the page background.
+
+    The uploaded PNG is placed as a full-page background (595.5 × 842.25 pt)
+    on every page. Margins are auto-detected from the image content.
+    Only PNG format is accepted.
+    """
+    from branding.complete_letterhead import validate_letterhead, generate_letterhead_preamble
+    from branding.models import BrandMode, BrandProfile
+    from branding.asset_manager import save_profile as _save_profile
+
+    doc_id = _new_doc_id()
+    tmp_dir = tempfile.mkdtemp(prefix="t2l_lh_")
+
+    try:
+        user_inputs: Dict[str, Any] = json.loads(fields_json)
+
+        # Save letterhead upload to temp
+        lh_ext = os.path.splitext(letterhead_image.filename or "lh.png")[1] or ".png"
+        lh_path = os.path.join(tmp_dir, f"letterhead{lh_ext}")
+        lh_bytes = await letterhead_image.read()
+        with open(lh_path, "wb") as fh:
+            fh.write(lh_bytes)
+
+        # Validate and infer margins
+        info = validate_letterhead(lh_path)
+
+        # Build preamble path inside profiles dir so it caches correctly
+        from branding.config import CONFIG as _BRAND_CONFIG
+        profile_dir = os.path.join(_BRAND_CONFIG.profiles_dir, profile_id)
+        os.makedirs(profile_dir, exist_ok=True)
+
+        # Copy the letterhead PNG into the profile dir for persistence
+        import shutil as _shutil
+        lh_dest = os.path.join(profile_dir, "letterhead.png")
+        _shutil.copy2(lh_path, lh_dest)
+
+        # Rebuild info with the persistent path
+        from branding.complete_letterhead import LetterheadInfo
+        persistent_info = LetterheadInfo(
+            path             = lh_dest,
+            width_px         = info.width_px,
+            height_px        = info.height_px,
+            file_size_bytes  = info.file_size_bytes,
+            top_margin_pt    = info.top_margin_pt,
+            bottom_margin_pt = info.bottom_margin_pt,
+            left_margin_pt   = info.left_margin_pt,
+            right_margin_pt  = info.right_margin_pt,
+        )
+
+        preamble_dest = os.path.join(profile_dir, "brand_preamble.tex")
+        generate_letterhead_preamble(persistent_info, preamble_dest)
+
+        # Persist profile record
+        profile = BrandProfile(
+            profile_id            = profile_id,
+            name                  = profile_name,
+            mode                  = BrandMode.LETTERHEAD,
+            letterhead_image_path = lh_dest,
+        )
+        _save_profile(profile)
+
+        output_pdf_path = os.path.join(OUTPUT_DIR, f"{doc_id}.pdf")
+        output_tex_path = os.path.join(OUTPUT_DIR, f"{doc_id}.tex")
+
+        _generate_with_branding_to(
+            doc_type=doc_type,
+            user_inputs=user_inputs,
+            brand_profile=profile,
+            output_tex=output_tex_path,
+            output_pdf=output_pdf_path,
+        )
+
+        _silent_remove(output_tex_path)
+
+        return JSONResponse({
+            "success":  True,
+            "doc_id":   doc_id,
+            "pdf_url":  f"/files/{doc_id}.pdf",
+            "doc_type": doc_type,
+            "letterhead_info": {
+                "width_px":        info.width_px,
+                "height_px":       info.height_px,
+                "top_margin_pt":   round(info.top_margin_pt, 1),
+                "bottom_margin_pt": round(info.bottom_margin_pt, 1),
+                "left_margin_pt":  round(info.left_margin_pt, 1),
+                "right_margin_pt": round(info.right_margin_pt, 1),
+            },
+        })
+
+    except ValueError as exc:
+        logger.warning("Validation error in letterhead endpoint: %s", exc)
+        return JSONResponse({"success": False, "error": str(exc)}, status_code=400)
+    except Exception as exc:
+        logger.exception("Unexpected error in letterhead endpoint")
+        return JSONResponse({"success": False, "error": str(exc)}, status_code=500)
+    finally:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+
 async def classify(
     file: UploadFile = File(..., description="PDF, DOCX, or image file to classify"),
 ) -> JSONResponse:

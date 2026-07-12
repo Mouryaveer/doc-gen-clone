@@ -65,6 +65,9 @@ def resolve_preamble(profile: BrandProfile) -> str:
     if profile.mode == BrandMode.CUSTOM:
         return _resolve_custom(profile)
 
+    if profile.mode == BrandMode.LETTERHEAD:
+        return _resolve_letterhead(profile)
+
     raise BrandProfileError(
         f"Unknown brand mode: {profile.mode!r}. "
         "Expected BrandMode.TURN2LAW or BrandMode.CUSTOM."
@@ -314,6 +317,64 @@ def _xelatex_precheck(preamble_path: str, files_written: list[str]) -> None:
             )
 
     logger.debug("XeLaTeX draftmode pre-check passed for %s", preamble_path)
+
+
+# ---------------------------------------------------------------------------
+# Letterhead branch (complete full-page PNG)
+# ---------------------------------------------------------------------------
+
+def _resolve_letterhead(profile: BrandProfile) -> str:
+    """
+    Validate the letterhead PNG and generate a full-page-background preamble.
+
+    The preamble is cached in the profile directory — subsequent calls for
+    the same profile_id return the cached path instantly.
+    """
+    from .complete_letterhead import validate_letterhead, generate_letterhead_preamble
+
+    if not profile.letterhead_image_path or not profile.letterhead_image_path.strip():
+        raise BrandProfileError(
+            "letterhead_image_path is required for letterhead branding "
+            f"(profile_id={profile.profile_id!r})."
+        )
+    if not os.path.isfile(profile.letterhead_image_path):
+        raise BrandProfileError(
+            f"letterhead_image_path file does not exist: "
+            f"{profile.letterhead_image_path!r} "
+            f"(profile_id={profile.profile_id!r})."
+        )
+
+    profile_dir = Path(CONFIG.profiles_dir) / profile.profile_id
+    cached_preamble = profile_dir / "brand_preamble.tex"
+
+    if cached_preamble.exists():
+        logger.info("resolve_preamble(letterhead) cache hit -> %s", cached_preamble)
+        return str(cached_preamble.resolve())
+
+    profile_dir.mkdir(parents=True, exist_ok=True)
+    preamble_dest = str(cached_preamble)
+
+    try:
+        info = validate_letterhead(profile.letterhead_image_path)
+        logger.debug(
+            "Letterhead validated: %dx%d px, margins top=%.1fpt bottom=%.1fpt",
+            info.width_px, info.height_px, info.top_margin_pt, info.bottom_margin_pt,
+        )
+        generate_letterhead_preamble(info, preamble_dest)
+        logger.info("Generated letterhead preamble: %s", preamble_dest)
+        save_profile(profile)
+    except Exception:
+        # Cleanup on failure
+        try:
+            if os.path.exists(preamble_dest):
+                os.remove(preamble_dest)
+        except OSError:
+            pass
+        raise
+
+    abs_path = os.path.abspath(preamble_dest)
+    logger.info("resolve_preamble(letterhead) -> %s", abs_path)
+    return abs_path
 
 
 # ---------------------------------------------------------------------------

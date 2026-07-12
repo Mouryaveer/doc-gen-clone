@@ -1,0 +1,11 @@
+{
+  "profile_id": "test_lh",
+  "name": "MotionComm Test",
+  "mode": "letterhead",
+  "header_image_path": null,
+  "footer_image_path": null,
+  "watermark_image_path": null,
+  "logo_image_path": null,
+  "letterhead_image_path": "C:\\Users\\moury\\Coding\\Turn2Law\\documentGeneration-master-1\\documentGeneration-master\\docgen\\branding\\profiles\\test_lh\\letterhead.png",
+  "created_at": "2026-07-12T07:15:38.991439+00:00"
+}

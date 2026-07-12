@@ -46,14 +46,15 @@ def _profile_json_path(profile_id: str) -> Path:
 
 def _profile_to_dict(profile: BrandProfile) -> dict[str, Any]:
     return {
-        "profile_id":           profile.profile_id,
-        "name":                 profile.name,
-        "mode":                 profile.mode.value,
-        "header_image_path":    profile.header_image_path,
-        "footer_image_path":    profile.footer_image_path,
-        "watermark_image_path": profile.watermark_image_path,
-        "logo_image_path":      profile.logo_image_path,
-        "created_at":           profile.created_at.isoformat(),
+        "profile_id":            profile.profile_id,
+        "name":                  profile.name,
+        "mode":                  profile.mode.value,
+        "header_image_path":     profile.header_image_path,
+        "footer_image_path":     profile.footer_image_path,
+        "watermark_image_path":  profile.watermark_image_path,
+        "logo_image_path":       profile.logo_image_path,
+        "letterhead_image_path": profile.letterhead_image_path,
+        "created_at":            profile.created_at.isoformat(),
     }
 
 
@@ -74,6 +75,7 @@ def _dict_to_profile(data: dict[str, Any]) -> BrandProfile:
         footer_image_path    = data.get("footer_image_path"),
         watermark_image_path = data.get("watermark_image_path"),
         logo_image_path      = data.get("logo_image_path"),
+        letterhead_image_path = data.get("letterhead_image_path"),
         created_at           = dt,
     )
 

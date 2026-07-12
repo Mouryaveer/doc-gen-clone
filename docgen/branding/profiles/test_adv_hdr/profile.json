@@ -1,0 +1,11 @@
+{
+  "profile_id": "test_adv_hdr",
+  "name": "Blue Header",
+  "mode": "custom",
+  "header_image_path": "C:\\Users\\moury\\AppData\\Local\\Temp\\t2l_brand_bg64acdz\\header.png",
+  "footer_image_path": null,
+  "watermark_image_path": null,
+  "logo_image_path": null,
+  "letterhead_image_path": null,
+  "created_at": "2026-07-12T07:16:00.822774+00:00"
+}

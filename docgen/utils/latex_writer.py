@@ -132,8 +132,8 @@ def render_latex(
     # \input{brand_preamble} token to replace.  Instead we:
     #   1. Strip the entire LaTeX preamble from the template (everything before
     #      \begin{document}) and replace it with the custom brand preamble.
-    #   2. Substitute the T2L asset filenames inside \begin{document}...\end{document}
-    #      with the absolute paths of the custom profile's processed PNGs.
+    #   2. Substitute T2L asset filenames inside \begin{document}...\end{document}
+    #      with the profile's processed PNGs if they exist, or blank them out safely.
     if preamble_path is not None:
         import re as _re
 
@@ -146,56 +146,49 @@ def render_latex(
         _custom_preamble_tex = _custom_preamble_tex.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
         _custom_preamble_tex = _custom_preamble_tex.replace("IMAGES_DIR_PLACEHOLDER", images_dir)
 
+        # Build mapping: T2L asset name → replacement path (or None if missing)
+        _asset_map = {
+            "header_decoration":    _profile_dir + "header.png",
+            "footer_decoration":    _profile_dir + "footer.png",
+            "sample_asset_0_xref_36": _profile_dir + "watermark.png",
+            "watermark_logo_n":     _profile_dir + "watermark.png",
+            "footer_icon_xref47":   _profile_dir + "logo.png",
+        }
+        # Also check logo.png separately for logo asset
+        _logo_path = _profile_dir + "logo.png"
+        if os.path.isfile(_logo_path):
+            _asset_map["sample_asset_0_xref_36"] = _logo_path  # logo in body textblock
+
         # Split template at \begin{document}
         _split = tex.split(r"\begin{document}", 1)
         if len(_split) == 2:
             _doc_body = r"\begin{document}" + _split[1]
 
-            # Replace T2L asset filenames with custom profile absolute paths.
-            # The filenames appear as bare names inside \includegraphics{...}.
-            _header_png    = _profile_dir + "header.png"
-            _footer_png    = _profile_dir + "footer.png"
-            _watermark_png = _profile_dir + "watermark.png"
-            _logo_png      = _profile_dir + "logo.png"
+            # For each T2L asset name, substitute paths if file exists.
+            # The pattern matches {assetname} or {assetname.ext} inside
+            # \includegraphics arguments — simple and reliable.
+            for _t2l_name, _dest_path in _asset_map.items():
+                _pat = r"\{" + _re.escape(_t2l_name) + r"(\.[a-zA-Z]+)?\}"
+                if os.path.isfile(_dest_path):
+                    _doc_body = _re.sub(_pat, "{" + _dest_path + "}", _doc_body)
+                else:
+                    # Asset doesn't exist in this profile.
+                    # Replace the entire \includegraphics[...]{assetname} call
+                    # with an empty \mbox{} so the surrounding textblock/node
+                    # doesn't choke XeLaTeX.
+                    _inc_pat = (
+                        r"\\includegraphics(?:\[[^\]]*\])?\s*\{"
+                        + _re.escape(_t2l_name)
+                        + r"(\.[a-zA-Z]+)?\}"
+                    )
+                    _doc_body = _re.sub(_inc_pat, r"\\mbox{}", _doc_body, flags=_re.DOTALL)
 
-            # header_decoration (covers full-width top strip)
-            _doc_body = _re.sub(
-                r"\{header_decoration\b[^}]*\}",
-                "{" + _header_png + "}",
-                _doc_body,
+            # Rebuild with custom preamble replacing the original template preamble
+            _doc_class_match = _re.match(r"(\s*\\documentclass[^\n]*\n)", tex)
+            _doc_class = (
+                _doc_class_match.group(1) if _doc_class_match
+                else "\\documentclass[10pt]{article}\n"
             )
-            # footer_decoration (covers full-width bottom strip)
-            _doc_body = _re.sub(
-                r"\{footer_decoration\b[^}]*\}",
-                "{" + _footer_png + "}",
-                _doc_body,
-            )
-            # watermark / logo centred on page (sample_asset_0_xref_36 or watermark_logo_n)
-            _doc_body = _re.sub(
-                r"\{sample_asset_0_xref_36\b[^}]*\}",
-                "{" + _watermark_png + "}",
-                _doc_body,
-            )
-            _doc_body = _re.sub(
-                r"\{watermark_logo_n\b[^}]*\}",
-                "{" + _watermark_png + "}",
-                _doc_body,
-            )
-            # logo (top-left, separate from watermark)
-            _doc_body = _re.sub(
-                r"\{footer_icon_xref47\b[^}]*\}",
-                "{" + _logo_png + "}",
-                _doc_body,
-            )
-
-            # Replace the geometry block in the template body with the one
-            # from the custom preamble (correct margins for this profile).
-            # We prepend \documentclass and then the full custom preamble.
-            _doc_class_match = _re.match(
-                r"(\s*\\documentclass[^\n]*\n)", tex
-            )
-            _doc_class = _doc_class_match.group(1) if _doc_class_match else "\\documentclass[10pt]{article}\n"
-
             tex = _doc_class + "\n" + _custom_preamble_tex + "\n" + _doc_body
 
     # Replace all {{KEY}} placeholders with escaped values.

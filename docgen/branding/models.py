@@ -13,8 +13,9 @@ from typing import Optional
 
 class BrandMode(str, Enum):
     """Branding mode selector."""
-    TURN2LAW = "turn2law"
-    CUSTOM   = "custom"
+    TURN2LAW   = "turn2law"
+    CUSTOM     = "custom"
+    LETTERHEAD = "letterhead"   # single full-page PNG background
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ class BrandProfile:
     footer_image_path:    Optional[str] = None
     watermark_image_path: Optional[str] = None
     logo_image_path:      Optional[str] = None
+    letterhead_image_path: Optional[str] = None   # complete letterhead mode
     created_at:           datetime = field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
