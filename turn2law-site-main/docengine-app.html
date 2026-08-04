@@ -313,6 +313,75 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;tra
 .asset-remove:hover{background:#FECACA}
 .asset-remove svg{width:12px;height:12px;stroke:var(--gray);fill:none;stroke-width:2}
 .brand-profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+
+/* ── Brand option rows (new 3-option UI) ── */
+.brand-option-row{
+  display:flex;align-items:flex-start;gap:14px;
+  border:1.5px solid var(--line);border-radius:var(--r);background:#fff;
+  padding:18px 20px;cursor:pointer;margin-bottom:10px;
+  transition:all .3s var(--ease);
+}
+.brand-option-row:hover{border-color:var(--gold);background:var(--gold-soft)}
+.brand-option-row.selected{border-color:var(--gold);background:var(--gold-soft)}
+.brand-opt-radio{
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--line);
+  flex:none;margin-top:3px;transition:all .25s;
+  display:flex;align-items:center;justify-content:center;
+}
+.brand-option-row.selected .brand-opt-radio{border-color:var(--gold-deep);background:var(--gold-deep)}
+.brand-option-row.selected .brand-opt-radio::after{
+  content:"";width:6px;height:6px;border-radius:50%;background:#fff;display:block;
+}
+.brand-opt-body{flex:1;min-width:0}
+.brand-opt-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.brand-opt-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px}
+.brand-opt-badge{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;
+  padding:3px 9px;border-radius:100px;
+  background:rgba(216,171,91,.25);border:1px solid rgba(216,171,91,.5);
+  color:var(--gold-text);
+}
+.brand-opt-desc{font-size:13px;color:var(--gray);line-height:1.5;margin:0}
+
+/* ── Complete Letterhead upload zone ── */
+#letterheadSection{margin-top:4px;margin-bottom:4px;
+  padding:0 0 0 32px;}  /* indent under the radio row */
+.lh-upload-zone{
+  border:2px dashed var(--line);border-radius:var(--r);
+  padding:28px 24px;text-align:center;cursor:pointer;
+  transition:all .3s var(--ease);background:var(--bg-tint);
+}
+.lh-upload-zone:hover,.lh-upload-zone.drag-over{border-color:var(--gold);background:var(--gold-soft)}
+.lh-upload-ico{
+  width:48px;height:48px;border-radius:14px;background:#fff;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 12px;
+}
+.lh-upload-ico svg{width:22px;height:22px;stroke:var(--gray);fill:none;stroke-width:1.7}
+.lh-upload-text{font-size:14px;color:var(--gray);margin-bottom:14px}
+.lh-upload-text strong{color:var(--ink);display:block;margin-bottom:4px;font-size:15px}
+.lh-upload-hints{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.lh-hint-chip{
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;
+  padding:3px 9px;border-radius:100px;background:#fff;
+  border:1px solid var(--line);color:var(--gray);
+}
+.lh-preview-inner{display:flex;align-items:flex-start;gap:16px;text-align:left}
+.lh-preview-img{max-height:120px;max-width:100px;border-radius:8px;
+  object-fit:contain;border:1px solid var(--line);background:#f5f5f5;}
+.lh-preview-meta{flex:1;min-width:0}
+.lh-preview-name{font-size:13px;font-weight:600;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.lh-preview-dims{font-size:11px;color:var(--gray);font-family:'DM Mono',monospace;margin-bottom:8px}
+.lh-detected-row{display:flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--gold-text);font-weight:600;
+  padding:6px 10px;background:rgba(216,171,91,.1);border-radius:8px;
+  border:1px solid rgba(216,171,91,.3);}
+.lh-validation-msg{
+  margin-top:10px;padding:10px 14px;border-radius:12px;
+  font-size:13px;font-weight:500;
+}
+.lh-validation-msg.error{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.lh-validation-msg.success{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
 /* ============ REVIEW (Step 5) ============ */
 .review-doc-type{border:1.5px solid var(--gold);border-radius:var(--r);
   padding:18px 20px;background:var(--gold-soft);margin-bottom:24px;
@@ -474,6 +543,9 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;tra
   .doc-meta-grid{grid-template-columns:1fr}
   .action-row{flex-direction:column;align-items:stretch}
   .action-row .spacer{display:none}
+  #letterheadSection{padding-left:0}
+  .lh-preview-inner{flex-direction:column}
+  .lh-preview-img{max-width:100%;max-height:160px}
 }
 @media(max-width:900px){
   .nav-links{display:none}
@@ -732,32 +804,112 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;tra
       <div class="step-header">
         <div class="step-number">Step 4 of 9</div>
         <h2 class="step-title" id="step4-title">Choose Branding</h2>
-        <p class="step-desc">Select whether to use Turn2Law's standard letterhead or upload your own company branding.</p>
+        <p class="step-desc">Pick how your document should look. Most users just need one letterhead PNG.</p>
       </div>
-      <div class="brand-cards" role="radiogroup" aria-label="Branding options">
-        <div class="brand-card selected" data-brand="turn2law" role="radio" aria-checked="true" tabindex="0"
-          onclick="selectBranding('turn2law')" onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('turn2law')">
-          <div class="brand-card-head">
-            <div class="brand-card-ico">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <span class="brand-card-title">Turn2Law Branding</span>
+
+      <!-- ── Option 1: Turn2Law ── -->
+      <div class="brand-option-row" id="bopt-turn2law" role="radio" aria-checked="true" tabindex="0"
+        data-brand="turn2law"
+        onclick="selectBranding('turn2law')"
+        onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('turn2law')">
+        <div class="brand-opt-radio" aria-hidden="true"></div>
+        <div class="brand-opt-body">
+          <div class="brand-opt-head">
+            <span class="brand-opt-title">Turn2Law Default Branding</span>
           </div>
-          <p class="brand-card-desc">Standard Turn2Law letterhead with professional Indian legal document formatting. No setup required.</p>
-        </div>
-        <div class="brand-card" data-brand="custom" role="radio" aria-checked="false" tabindex="0"
-          onclick="selectBranding('custom')" onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('custom')">
-          <div class="brand-card-head">
-            <div class="brand-card-ico">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-            </div>
-            <span class="brand-card-title">Custom Company Branding</span>
-          </div>
-          <p class="brand-card-desc">Upload your own header, footer, watermark, and logo for a fully branded document.</p>
+          <p class="brand-opt-desc">Professional Turn2Law letterhead. No uploads needed.</p>
         </div>
       </div>
 
-      <!-- Custom branding fields -->
+      <!-- ── Option 2: Complete Letterhead ── -->
+      <div class="brand-option-row" id="bopt-letterhead" role="radio" aria-checked="false" tabindex="0"
+        data-brand="letterhead"
+        onclick="selectBranding('letterhead')"
+        onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('letterhead')">
+        <div class="brand-opt-radio" aria-hidden="true"></div>
+        <div class="brand-opt-body">
+          <div class="brand-opt-head">
+            <span class="brand-opt-title">Upload Complete Letterhead</span>
+            <span class="brand-opt-badge">⭐ Recommended</span>
+          </div>
+          <p class="brand-opt-desc">Upload one A4 PNG containing your company's complete design — header, footer, watermark, and all branding. It will be used as the background on every page.</p>
+        </div>
+      </div>
+
+      <!-- Letterhead upload zone (shown when letterhead mode selected) -->
+      <div id="letterheadSection" style="display:none">
+        <div class="lh-upload-zone" id="lhDropZone" role="button" tabindex="0"
+          aria-label="Upload complete letterhead PNG"
+          onclick="document.getElementById('lhFileInput').click()"
+          onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('lhFileInput').click()">
+          <div id="lhPlaceholder">
+            <div class="lh-upload-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="lh-upload-text">
+              <strong>Drop your letterhead PNG here</strong>
+              or <span style="color:var(--gold-deep);font-weight:600;cursor:pointer">browse files</span>
+            </div>
+            <div class="lh-upload-hints">
+              <span class="lh-hint-chip">PNG only</span>
+              <span class="lh-hint-chip">A4 recommended</span>
+              <span class="lh-hint-chip">300 DPI</span>
+              <span class="lh-hint-chip">Min 1240 × 1754 px</span>
+              <span class="lh-hint-chip">Max 20 MB</span>
+            </div>
+          </div>
+          <div id="lhPreviewWrap" style="display:none">
+            <div class="lh-preview-inner">
+              <img id="lhPreviewImg" alt="Letterhead preview" class="lh-preview-img">
+              <div class="lh-preview-meta">
+                <div class="lh-preview-name" id="lhPreviewName"></div>
+                <div class="lh-preview-dims" id="lhPreviewDims"></div>
+                <div class="lh-detected-info" id="lhDetectedInfo" style="display:none">
+                  <div class="lh-detected-row">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span id="lhDetectedText">Ready to use</span>
+                  </div>
+                </div>
+                <button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;justify-content:center"
+                  onclick="removeLh(event)" aria-label="Remove letterhead">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <input type="file" accept="image/png" class="upload-file-input" id="lhFileInput"
+          aria-label="Letterhead PNG upload" onchange="handleLhUpload(this.files[0])">
+        <div id="lhValidationMsg" class="lh-validation-msg" style="display:none"></div>
+        <div class="brand-profile-fields" style="margin-top:14px">
+          <div class="field">
+            <label for="lhCompanyName">Company Name <span class="req">*</span></label>
+            <input type="text" id="lhCompanyName" placeholder="e.g. MotionComm Technologies" aria-required="true"
+              oninput="autoLhProfileId(this.value)">
+          </div>
+          <div class="field">
+            <label for="lhProfileId">Profile ID</label>
+            <input type="text" id="lhProfileId" placeholder="auto-generated" aria-label="Profile ID (auto-generated)">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Option 3: Advanced Custom ── -->
+      <div class="brand-option-row" id="bopt-custom" role="radio" aria-checked="false" tabindex="0"
+        data-brand="custom"
+        onclick="selectBranding('custom')"
+        onkeydown="if(event.key==='Enter'||event.key===' ')selectBranding('custom')">
+        <div class="brand-opt-radio" aria-hidden="true"></div>
+        <div class="brand-opt-body">
+          <div class="brand-opt-head">
+            <span class="brand-opt-title">Advanced Custom Branding</span>
+          </div>
+          <p class="brand-opt-desc">Customize individual header, footer, logo, and watermark assets separately.</p>
+        </div>
+      </div>
+
+      <!-- Advanced fields (hidden behind toggle) -->
       <div class="custom-brand-section" id="customBrandSection">
         <div class="asset-upload-grid">
           <div class="asset-upload" id="assetHeader" role="button" tabindex="0"
@@ -1134,6 +1286,7 @@ const state = {
   brandAssets: {},
   brandProfileId: null,
   brandProfileName: null,
+  letterheadFile: null,      // File — complete letterhead mode
   docId: null,
   pdfUrl: null,
   signedPdfUrl: null,
@@ -1495,15 +1648,121 @@ function checkForDraft() {
    ============================================================ */
 function selectBranding(mode) {
   state.brandingMode = mode;
-  document.querySelectorAll('.brand-card').forEach(c => {
-    c.classList.remove('selected');
-    c.setAttribute('aria-checked', 'false');
+  // Update radio rows
+  document.querySelectorAll('.brand-option-row').forEach(r => {
+    const sel = r.dataset.brand === mode;
+    r.classList.toggle('selected', sel);
+    r.setAttribute('aria-checked', String(sel));
   });
-  const card = document.querySelector(`.brand-card[data-brand="${mode}"]`);
-  if (card) { card.classList.add('selected'); card.setAttribute('aria-checked', 'true'); }
-  const sec = document.getElementById('customBrandSection');
-  sec.classList.toggle('visible', mode === 'custom');
+  // Show/hide section panels
+  document.getElementById('letterheadSection').style.display  = mode === 'letterhead' ? 'block' : 'none';
+  const adv = document.getElementById('customBrandSection');
+  adv.classList.toggle('visible', mode === 'custom');
 }
+
+function handleLhUpload(file) {
+  if (!file) return;
+  const msg = document.getElementById('lhValidationMsg');
+  msg.style.display = 'none';
+  if (!file.name.toLowerCase().endsWith('.png') && file.type !== 'image/png') {
+    _lhError('Only PNG files are accepted for the letterhead.'); return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    _lhError('File exceeds 20 MB maximum.'); return;
+  }
+
+  // Read the file, auto-resize if needed, then store in state
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const w = img.naturalWidth, h = img.naturalHeight;
+      const MIN_W = 1000, MIN_H = 1400;
+
+      if (w >= MIN_W && h >= MIN_H) {
+        // Already meets requirements — use as-is
+        _lhStoreAndPreview(file, img, w, h, null);
+      } else {
+        // Auto-upscale to meet minimum, preserving aspect ratio
+        const scale = Math.max(MIN_W / w, MIN_H / h);
+        const newW  = Math.round(w * scale);
+        const newH  = Math.round(h * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width  = newW;
+        canvas.height = newH;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, newW, newH);
+        canvas.toBlob(function(blob) {
+          const resized = new File([blob], file.name, { type: 'image/png' });
+          _lhStoreAndPreview(resized, img, newW, newH,
+            `Auto-resized from ${w}×${h} to ${newW}×${newH} px to meet minimum requirements.`);
+        }, 'image/png');
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function _lhStoreAndPreview(file, imgEl, w, h, autoResizeNote) {
+  state.letterheadFile = file;
+  const url = URL.createObjectURL(file);
+  const previewImg = document.getElementById('lhPreviewImg');
+  previewImg.src = url;
+  document.getElementById('lhPreviewName').textContent = file.name;
+  document.getElementById('lhPreviewDims').textContent =
+    `${w} × ${h} px  ·  ${(file.size / 1024 / 1024).toFixed(1)} MB`;
+  document.getElementById('lhPlaceholder').style.display = 'none';
+  document.getElementById('lhPreviewWrap').style.display = 'block';
+  document.getElementById('lhDetectedInfo').style.display = 'block';
+  if (autoResizeNote) {
+    document.getElementById('lhDetectedText').textContent = '✓ ' + autoResizeNote;
+    const msg = document.getElementById('lhValidationMsg');
+    msg.className = 'lh-validation-msg success';
+    msg.textContent = autoResizeNote;
+    msg.style.display = 'block';
+  } else {
+    document.getElementById('lhDetectedText').textContent = `${w}×${h} px — ready to use`;
+    document.getElementById('lhValidationMsg').style.display = 'none';
+  }
+}
+
+function _lhError(msg) {
+  const el = document.getElementById('lhValidationMsg');
+  el.className = 'lh-validation-msg error';
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function removeLh(e) {
+  e.stopPropagation();
+  state.letterheadFile = null;
+  document.getElementById('lhFileInput').value = '';
+  document.getElementById('lhPreviewWrap').style.display = 'none';
+  document.getElementById('lhPlaceholder').style.display = 'block';
+  document.getElementById('lhValidationMsg').style.display = 'none';
+  document.getElementById('lhDetectedInfo').style.display = 'none';
+}
+
+function autoLhProfileId(name) {
+  const id = name.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+  document.getElementById('lhProfileId').value = id;
+  state.brandProfileId = id;
+  state.brandProfileName = name;
+}
+
+// Drag-and-drop on letterhead zone
+(function(){
+  const zone = document.getElementById('lhDropZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) { document.getElementById('lhFileInput').files; handleLhUpload(f); }
+  });
+})();
 
 function triggerAssetUpload(assetKey) {
   document.getElementById('assetInput-' + assetKey).click();
@@ -1560,7 +1819,19 @@ function autoProfileId(name) {
 });
 
 function validateAndGoStep5() {
-  if (state.brandingMode === 'custom') {
+  if (state.brandingMode === 'letterhead') {
+    if (!state.letterheadFile) {
+      showToast('Please upload your company letterhead PNG first.', 'error'); return;
+    }
+    const companyName = document.getElementById('lhCompanyName').value.trim();
+    if (!companyName) {
+      showToast('Company name is required.', 'error');
+      document.getElementById('lhCompanyName').focus(); return;
+    }
+    state.brandProfileName = companyName;
+    state.brandProfileId   = document.getElementById('lhProfileId').value.trim()
+      || companyName.toLowerCase().replace(/\W+/g,'_');
+  } else if (state.brandingMode === 'custom') {
     if (!state.brandAssets.header) {
       showToast('Header image is required for custom branding.', 'error'); return;
     }
@@ -1604,8 +1875,10 @@ function renderReview() {
   });
   html += `</div>`;
   // Branding
-  const brandLabel = state.brandingMode === 'custom'
-    ? `Custom — ${state.brandProfileName || 'Company Branding'}`
+  const brandLabel = state.brandingMode === 'letterhead'
+    ? `Complete Letterhead — ${state.brandProfileName || 'Company'}`
+    : state.brandingMode === 'custom'
+    ? `Advanced Custom — ${state.brandProfileName || 'Company Branding'}`
     : 'Turn2Law Standard';
   html += `<div style="margin-top:16px;display:flex;align-items:center;gap:10px">
     <span style="font-size:14px;font-weight:600;color:var(--ink)">Branding:</span>
@@ -1691,7 +1964,16 @@ function setGenProgress(pct) {
 }
 
 async function callGenerateAPI() {
-  if (state.brandingMode === 'custom') {
+  if (state.brandingMode === 'letterhead') {
+    const fd = new FormData();
+    fd.append('doc_type', state.selectedDocType);
+    fd.append('fields_json', JSON.stringify(state.formData));
+    fd.append('profile_id', state.brandProfileId || 'lh_' + Date.now());
+    fd.append('profile_name', state.brandProfileName || 'Letterhead');
+    fd.append('letterhead_image', state.letterheadFile);
+    const res = await fetch(`${API}/api/generate-with-letterhead`, { method: 'POST', body: fd });
+    return res.json();
+  } else if (state.brandingMode === 'custom') {
     const fd = new FormData();
     fd.append('doc_type', state.selectedDocType);
     fd.append('fields_json', JSON.stringify(state.formData));
@@ -1908,8 +2190,10 @@ function populateDownloadPage() {
   // Metadata
   document.getElementById('metaDate').textContent = genDate;
   document.getElementById('metaType').textContent = docName;
-  document.getElementById('metaBranding').textContent = state.brandingMode === 'custom'
-    ? `Custom — ${state.brandProfileName || 'Company'}` : 'Turn2Law Standard';
+  document.getElementById('metaBranding').textContent = state.brandingMode === 'letterhead'
+    ? `Complete Letterhead — ${state.brandProfileName || 'Company'}`
+    : state.brandingMode === 'custom'
+    ? `Advanced Custom — ${state.brandProfileName || 'Company'}` : 'Turn2Law Standard';
   document.getElementById('metaDocId').textContent = state.docId || '—';
 }
 
@@ -1921,6 +2205,7 @@ function resetApp() {
     currentStep: 1, selectedDocType: null, selectedDocMeta: null,
     inputMethod: 'form', formData: {}, schemaRequired: [], schemaOptional: [],
     brandingMode: 'turn2law', brandAssets: {}, brandProfileId: null, brandProfileName: null,
+    letterheadFile: null,
     docId: null, pdfUrl: null, signedPdfUrl: null, signerName: null,
     certFile: null, certValidated: false, generatedAt: null,
   });
@@ -1953,6 +2238,14 @@ function resetApp() {
   });
   document.getElementById('brandCompanyName').value = '';
   document.getElementById('brandProfileId').value = '';
+  // Reset letterhead
+  document.getElementById('lhFileInput').value = '';
+  document.getElementById('lhCompanyName').value = '';
+  document.getElementById('lhProfileId').value = '';
+  document.getElementById('lhPreviewWrap').style.display = 'none';
+  document.getElementById('lhPlaceholder').style.display = 'block';
+  document.getElementById('lhValidationMsg').style.display = 'none';
+  document.getElementById('lhDetectedInfo').style.display = 'none';
   goToStep(1);
 }
 
