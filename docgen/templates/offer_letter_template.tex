@@ -1,6 +1,8 @@
 % =============================================================================
-%  Turn2Law — Offer Letter
+%  Offer Letter  — white-label / multi-tenant
 %  Compiler : XeLaTeX  |  Multi-page, brand-consistent
+%  All Turn2Law-specific values replaced with {{CP_*}} tokens that are
+%  injected at render time from the CompanyProfile supplied by the caller.
 % =============================================================================
 \documentclass[10pt]{article}
 \input{LAYOUTS_DIR_PLACEHOLDERbrand_preamble}
@@ -19,28 +21,28 @@
 
 \vspace{6pt}
 \noindent\textbf{Date:} {{Start_Date}}\\
-\noindent\textbf{Reference:} T2L/OFFER/{{Name}}/{{Start_Date}}
+\noindent\textbf{Reference:} OL/{{Name}}/{{Start_Date}}
 
 \vspace{10pt}
 \noindent\textbf{{{Name}}}\\
-\noindent{{Company}}
+\noindent {{Company}}
 
 \vspace{10pt}
 \noindent Dear \textbf{{{Name}}},
 
 \vspace{8pt}
-\noindent We are delighted to extend this offer of employment to you at \textbf{EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED} (\textbf{"Turn2Law"} or \textbf{"Company"}). Following our discussions and evaluation process, we are pleased to confirm the following terms and conditions of your engagement.
+\noindent We are delighted to extend this offer of employment to you at \textbf{{{CP_Company_Name}}} (\textbf{"Company"}). Following our discussions and evaluation process, we are pleased to confirm the following terms and conditions of your engagement.
 
 % ── Clause 1 ─────────────────────────────────────────────────────────────────
 \section{POSITION AND REPORTING}
 
-\textbf{1.1 Position:} You are being offered the position of \textbf{{{Position}}} at Turn2Law.
+\textbf{1.1 Position:} You are being offered the position of \textbf{{{Position}}} at {{CP_Company_Name}}.
 
 \ifthenelse{\equal{{{Manager_Name}}}{}}{}{%
 \textbf{1.2 Reporting Manager:} You will report to \textbf{{{Manager_Name}}}, or such other person as may be designated by the Company from time to time.
 }
 
-\textbf{1.3 Place of Work:} Your primary place of work shall be Block~5, DEI Innovation Hub, SRMIST, Kattankulathur, Chennai\,--\,603203, Tamil Nadu, India, or such other location as the Company may specify.
+\textbf{1.3 Place of Work:} Your primary place of work shall be {{CP_Company_Address}}, or such other location as the Company may specify.
 
 % ── Clause 2 ─────────────────────────────────────────────────────────────────
 \section{DATE OF JOINING}
@@ -60,7 +62,7 @@
 
 \textbf{3.3 Variable Pay:} Any variable or performance-linked component, if applicable, shall be governed by the Company's policy in force from time to time and shall not be deemed a guaranteed entitlement.
 
-\textbf{3.4 Deductions:} The Company shall deduct applicable taxes at source (TDS) and statutory contributions (PF, ESI, as applicable) in accordance with prevailing Indian law.
+\textbf{3.4 Deductions:} The Company shall deduct applicable taxes at source and statutory contributions in accordance with prevailing law.
 
 % ── Clause 4 ─────────────────────────────────────────────────────────────────
 \section{PROBATION}
@@ -104,7 +106,7 @@
 % ── Clause 9 ─────────────────────────────────────────────────────────────────
 \section{GOVERNING LAW}
 
-This offer letter and your employment relationship with the Company shall be governed by the laws of India. Any disputes arising hereunder shall be subject to the exclusive jurisdiction of the courts at Chennai, Tamil Nadu.
+This offer letter and your employment relationship with the Company shall be governed by applicable law. Any disputes arising hereunder shall be subject to the jurisdiction of the competent courts.
 
 % ── Acceptance ────────────────────────────────────────────────────────────────
 \section{ACCEPTANCE}
@@ -112,17 +114,16 @@ This offer letter and your employment relationship with the Company shall be gov
 \noindent Please indicate your acceptance of this offer by signing and returning a copy of this letter on or before \ifthenelse{\equal{{{Response_Date}}}{}}{the date indicated below}{\textbf{{{Response_Date}}}}. Your signature confirms that you have read, understood, and agree to all terms and conditions set out herein.
 
 \vspace{16pt}
-\noindent We look forward to welcoming you to the Turn2Law family. If you have any questions, please contact \ifthenelse{\equal{{{HR_Manager}}}{}}{our People \& Culture team at turntwolaw@gmail.com}{\textbf{{{HR_Manager}}} at turntwolaw@gmail.com}.
+\noindent We look forward to welcoming you to the {{CP_Company_Name}} family. If you have any questions, please contact \ifthenelse{\equal{{{HR_Manager}}}{}}{our HR team at {{CP_Company_Email}}}{\textbf{{{HR_Manager}}} at {{CP_Company_Email}}}.
 
 \vspace{20pt}
 \noindent\begin{tabularx}{\textwidth}{@{}X@{\hspace{20pt}}X@{}}
-\textbf{For EFFIVIA TURN2LAW LEGAL} &
-\textbf{ACCEPTED BY} \\
-\textbf{PRIVATE LIMITED} & \\[24pt]
+\textbf{For {{CP_Company_Name}}} &
+\textbf{ACCEPTED BY} \\[24pt]
 \rule{200pt}{0.5pt} & \rule{200pt}{0.5pt} \\[3pt]
 Authorised Signatory & {{Name}} \\[3pt]
-Name: Yash Phoghat & Position: {{Position}} \\[3pt]
-Designation: Founder \& CEO & \\[3pt]
+Name: {{CP_Signatory_Name}} & Position: {{Position}} \\[3pt]
+Designation: {{CP_Designation}} & \\[3pt]
 Date: \underline{\hspace{70pt}} & Date: \underline{\hspace{70pt}} \\
 \end{tabularx}
 

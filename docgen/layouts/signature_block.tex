@@ -1,17 +1,28 @@
 % =============================================================================
-%  signature_block.tex — Turn2Law standard signatory block
+%  signature_block.tex — Dynamic signatory block (white-label / multi-tenant)
 %  Include at the bottom of every document body with \input{signature_block}
-%  Provides: "For EFFIVIA TURN2LAW" authorised signatory line +
-%            divider + email footer anchored to page bottom.
+%
+%  All values come from {{CP_*}} tokens injected at render time:
+%    CP_Company_Name   — e.g. "SynkSpace Technologies Pvt. Ltd."
+%    CP_Signatory_Name — e.g. "Arjun Mehta"
+%    CP_Designation    — e.g. "Founder & CEO"
+%    CP_Signature_Image — optional: filename of signature PNG (no extension path)
 %
 %  For documents needing BOTH party signatures, use signature_block_dual.tex
 % =============================================================================
 
 \vspace{18pt}
-\noindent\textbf{For EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED}
+\noindent\textbf{For {{CP_Company_Name}}}
 
 \vspace{30pt}
-\noindent\rule{180pt}{0.5pt}\\[2pt]
-\noindent{\fontsize{11pt}{14pt}\selectfont\textbf{Yash Phoghat}}\\
-\noindent{\fontsize{10pt}{13pt}\selectfont Founder \& CEO, TURN2LAW}\\
+\ifthenelse{\equal{{{CP_Signature_Image}}}{}}{%
+  % No signature image — just the signature line
+  \noindent\rule{180pt}{0.5pt}\\[2pt]%
+}{%
+  % Show uploaded signature image above the line
+  \noindent\includegraphics[height=48pt,keepaspectratio=true]{{{CP_Signature_Image}}}\\[4pt]%
+  \noindent\rule{180pt}{0.5pt}\\[2pt]%
+}
+\noindent{\fontsize{11pt}{14pt}\selectfont\textbf{{{CP_Signatory_Name}}}}\\
+\noindent{\fontsize{10pt}{13pt}\selectfont {{CP_Designation}}, {{CP_Company_Name}}}\\
 \noindent{\fontsize{9pt}{12pt}\selectfont Date: \underline{\hspace{80pt}}}

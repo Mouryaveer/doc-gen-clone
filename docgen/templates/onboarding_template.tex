@@ -35,6 +35,7 @@
 \usepackage{xcolor}
 \usepackage{eso-pic}
 \usepackage{tikz}
+\usepackage{ifthen}
 \usetikzlibrary{calc}
 \usepackage[absolute,overlay]{textpos}
 \setlength{\TPHorizModule}{1pt}
@@ -114,7 +115,7 @@
 
 % TITLE: pdf y0=118.61 → textpos y=123.01
 \begin{textblock}{521.5}(42.0,123.01)
-\noindent{\fontsize{22pt}{27pt}\selectfont\textbf{Onboarding Letter - Turn2Law}}
+\noindent{\fontsize{22pt}{27pt}\selectfont\textbf{Onboarding Letter{{CP_Title_Suffix}}}}
 \end{textblock}
 
 % DATE: pdf y0=147.93 → textpos y=152.33
@@ -134,17 +135,17 @@
 
 % JOINING STATEMENT: pdf y0=222.2 → textpos y=226.6  width=477.5pt
 \begin{textblock}{477.5}(42.0,226.6)
-\noindent{\fontsize{13pt}{18pt}\selectfont has officially joined Turn2Law as a \textbf{{{Role}}} as of {{Joining_Date}}.}
+\noindent{\fontsize{13pt}{18pt}\selectfont has officially joined \textbf{{{CP_Company_Name}}} as a \textbf{{{Role}}} as of {{Joining_Date}}.}
 \end{textblock}
 
 % PARA 1: pdf y0=278.47 → textpos y=282.87  width=489.74pt
 \begin{textblock}{489.74}(42.0,282.87)
-\noindent{\fontsize{13pt}{18pt}\selectfont As a valued member of our growing team, {{Employee_Name}} will contribute to our mission to democratize access to justice by blending technology with human expertise.}
+\noindent{\fontsize{13pt}{18pt}\selectfont As a valued member of our growing team, {{Employee_Name}} will contribute to the mission and values of {{CP_Company_Name}}.}
 \end{textblock}
 
 % PARA 2: pdf y0=350.5 → textpos y=354.9
 \begin{textblock}{489.74}(42.0,354.9)
-\noindent{\fontsize{13pt}{18pt}\selectfont Our platform is an integrated legal-tech solution offering AI-powered document drafting, verified online lawyer consultancy, and intelligent legal chatbots. It includes specialized startup legal services with compliance guidance, founder agreements, etc.}
+\noindent{\fontsize{13pt}{18pt}\selectfont We are committed to fostering a collaborative, high-performance environment. We look forward to your ideas, contributions, and growth within the organization.}
 \end{textblock}
 
 % POSITION DETAILS HEADING: pdf y0=440.78 → textpos y=445.18
@@ -167,7 +168,7 @@
 \end{textblock}
 % BULLET 2 TEXT: pdf y0=478.8 → textpos y=483.2
 \begin{textblock}{463.83}(64.09,483.2)
-\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Location:} EFFIVIA TURN2LAW LEGAL PRIVATE LIMITED Block 5, DEI Innovation Hub, SRMIST, Kattankulathur, Chennai -- 603203, Tamil Nadu, India}
+\noindent{\fontsize{13pt}{18pt}\selectfont\textbf{Location:} {{CP_Company_Address}}}
 \end{textblock}
 
 % BULLET 3 DOT: pdf path [51,540.65,54.75,544.4]
@@ -181,7 +182,7 @@
 
 % CLOSING PARA: pdf y0=568.83 → textpos y=573.23
 \begin{textblock}{489.74}(42.0,573.23)
-\noindent{\fontsize{13pt}{18pt}\selectfont We are excited to have you as part of the Turn2Law team, and we look forward to achieving great things together.}
+\noindent{\fontsize{13pt}{18pt}\selectfont We are excited to have you as part of the {{CP_Company_Name}} team, and we look forward to achieving great things together.}
 \end{textblock}
 
 % BEST REGARDS: pdf y0=622.85 → textpos y=627.25
@@ -189,20 +190,22 @@
 \noindent{\fontsize{13pt}{18pt}\selectfont Best Regards,}
 \end{textblock}
 
-% SIGNATURE IMAGE: 5% smaller — original 80.28×80.28pt → 76.27×76.27pt
+% SIGNATURE IMAGE: shown only when CP_Signature_Image is provided
 % y adjusted slightly: 651.43 + (80.28-76.27)/2 = 653.44 to keep visual centre
+\ifthenelse{\equal{{{CP_Signature_Image}}}{}}{}{%
 \begin{textblock}{76.27}(47.59,653.44)
-\noindent\includegraphics[width=76.27pt,height=76.27pt,keepaspectratio=false]{sample_asset_1_xref_47}
+\noindent\includegraphics[width=76.27pt,height=76.27pt,keepaspectratio=false]{{{CP_Signature_Image}}}
 \end{textblock}
+}
 
 % FOUNDER NAME: pdf y0=713.13 → textpos y=717.53
 \begin{textblock}{300}(42.0,717.53)
-\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Yash Phoghat}}
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{{{CP_Signatory_Name}}}}
 \end{textblock}
 
 % FOUNDER TITLE: pdf y0=733.39 → textpos y=737.79
 \begin{textblock}{300}(42.0,737.79)
-\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{Founder \& CEO, TURN2LAW}}
+\noindent{\fontsize{15pt}{20pt}\selectfont\addfontfeatures{LetterSpace=-0.5}\textbf{{{CP_Designation}}, {{CP_Company_Name}}}}
 \end{textblock}
 
 % DIVIDER: filled rect path[16] x=41.98→563.01, y=753.17→756.17 (3pt thick)

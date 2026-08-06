@@ -1,20 +1,25 @@
+# coding: utf-8
 """
-pdf_signer.py — Core PDF signing using pyHanko (PAdES / CMS).
+pdf_signer.py — Core PDF signing via pyHanko (PAdES / CMS incremental update).
 
-This module is the only place that imports pyHanko.  All other modules in
-digital_signature/ are pyHanko-agnostic.
+Visible signature appearance (clean text box, no cursive watermark):
 
-Visible signature appearance
------------------------------
-Matches the reference screenshots:
+  ┌──────────────────────────────────────────────────┐
+  │  Digitally signed by JAGJYOT SINGH               │
+  │  Date: 2026.07.10 16:24:35 +00'00'               │
+  │  Reason: Approved                                │
+  │  Location: Chennai, India                        │
+  └──────────────────────────────────────────────────┘
 
-  ┌─────────────────────────────────────────────────────────────────────────┐
-  │  Digitally signed by JAGJYOT SINGH                                      │
-  │  Date: 2026.07.10 16:24:35 +00'00'                                      │
-  │  Reason: Approved   Location: Chennai, India                            │
-  └─────────────────────────────────────────────────────────────────────────┘
-
-NO cursive / handwritten watermark.  background_opacity=0.0 ensures a clean box.
+Design decisions
+────────────────
+• SimpleSigner.load_pkcs12() is used so pyHanko manages the PKCS#12 bundle
+  internally — the private key is never serialised to Python-land beyond the
+  CertificateBundle we already validated.
+• IncrementalPdfFileWriter keeps the original byte sequence intact; the CMS
+  blob is appended — original content hash remains valid.
+• TSA (RFC 3161) client is injected from timestamp.py; None when disabled.
+• background_opacity=0.0 on the TextStampStyle eliminates any tint/watermark.
 """
 
 from __future__ import annotations
@@ -22,14 +27,14 @@ from __future__ import annotations
 import logging
 import os
 from io import BytesIO
-from typing import Optional, Any, Tuple
+from typing import Any, Optional, Tuple
 
 from .certificate_loader import CertificateBundle
+from .exceptions import PDFIntegrityError, SigningFailedError
 from .metadata import SignatureMetadata
-from .timestamp import build_pyhanko_tsa_client
-from .exceptions import SigningFailedError, PDFIntegrityError
-from .utils import assert_valid_pdf, build_output_path
 from .signature_config import DIGEST_ALGORITHM, SIGNATURE_FIELD_NAME
+from .timestamp import build_pyhanko_tsa_client
+from .utils import assert_valid_pdf, build_output_path
 
 logger = logging.getLogger(__name__)
 
@@ -47,15 +52,15 @@ def sign_pdf(
     password:   str = "",
 ) -> str:
     """
-    Sign *input_pdf* and write the result to *output_pdf*.
+    Sign *input_pdf* and write the signed result to *output_pdf*.
 
     Parameters
     ----------
     input_pdf  : absolute path to the unsigned PDF
-    output_pdf : destination path; if None, auto-derived as *_signed.pdf
-    bundle     : loaded + validated CertificateBundle (used for metadata only)
+    output_pdf : destination path; auto-derived as *_signed.pdf when None
+    bundle     : loaded + validated CertificateBundle (used for metadata)
     metadata   : SignatureMetadata
-    cert_path  : path to .pfx/.p12 (passed to pyHanko's native loader)
+    cert_path  : path to the .pfx/.p12 (passed directly to pyHanko loader)
     password   : certificate password (cleared after use)
 
     Returns
@@ -69,7 +74,12 @@ def sign_pdf(
         output_pdf = build_output_path(input_pdf)
     output_pdf = os.path.abspath(output_pdf)
 
-    logger.info("Signing PDF: %s  →  %s", input_pdf, output_pdf)
+    # Ensure destination directory exists
+    out_dir = os.path.dirname(output_pdf)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+
+    logger.info("Signing PDF:  %s  →  %s", input_pdf, output_pdf)
 
     metadata.stamp_signing_time()
     metadata.certificate_subject = bundle.subject_cn
@@ -81,9 +91,11 @@ def sign_pdf(
     except SigningFailedError:
         raise
     except Exception as exc:
-        raise SigningFailedError(f"Signing operation failed unexpectedly: {exc}") from exc
+        raise SigningFailedError(
+            f"Signing operation failed unexpectedly: {exc}"
+        ) from exc
     finally:
-        password = ""  # noqa: F841 — clear local copy
+        password = ""  # clear local copy — noqa: F841
 
     logger.info("Signed PDF saved: %s", output_pdf)
     return output_pdf
@@ -100,9 +112,9 @@ def _sign_with_pyhanko(
     cert_path:  str,
     password:   str,
 ) -> None:
-    """Sign using pyHanko's SimpleSigner.load_pkcs12() + PdfSigner."""
+    """Internal: sign using pyHanko SimpleSigner + PdfSigner."""
 
-    # ── imports ──────────────────────────────────────────────────────────
+    # ── Imports ──────────────────────────────────────────────────────────
     try:
         from pyhanko.sign.signers import SimpleSigner
         from pyhanko.sign.signers.pdf_signer import PdfSignatureMetadata, PdfSigner
@@ -116,44 +128,52 @@ def _sign_with_pyhanko(
     # ── Build signer from PKCS#12 ────────────────────────────────────────
     passphrase: Optional[bytes] = None
     try:
-        passphrase = password.encode("utf-8") if isinstance(password, str) else password
+        passphrase = (
+            password.encode("utf-8") if isinstance(password, str) else password
+        )
         signer = SimpleSigner.load_pkcs12(
-            pfx_file   = cert_path,
-            passphrase = passphrase,
+            pfx_file=cert_path,
+            passphrase=passphrase,
         )
     except Exception as exc:
-        raise SigningFailedError(f"SimpleSigner.load_pkcs12 failed: {exc}") from exc
+        raise SigningFailedError(
+            f"Failed to load PKCS#12 certificate for signing: {exc}"
+        ) from exc
     finally:
-        passphrase = None
+        passphrase = None   # clear immediately
 
     # ── Signature metadata ────────────────────────────────────────────────
     sig_meta = PdfSignatureMetadata(
         field_name   = SIGNATURE_FIELD_NAME,
         md_algorithm = DIGEST_ALGORITHM,
         name         = metadata.signer_name or None,
-        reason       = metadata.reason or None,
-        location     = metadata.location or None,
-        contact_info = metadata.contact or None,
+        reason       = metadata.reason       or None,
+        location     = metadata.location     or None,
+        contact_info = metadata.contact      or None,
         certify      = False,
     )
 
-    # ── TSA client ────────────────────────────────────────────────────────
+    # ── TSA client (None when timestamping is disabled) ───────────────────
     tsa_client = build_pyhanko_tsa_client()
 
-    # ── Open PDF ──────────────────────────────────────────────────────────
+    # ── Open PDF for incremental writing ─────────────────────────────────
     try:
         with open(input_pdf, "rb") as fh:
             pdf_bytes = fh.read()
         reader = PdfFileReader(BytesIO(pdf_bytes))
         writer = IncrementalPdfFileWriter(BytesIO(pdf_bytes))
     except Exception as exc:
-        raise PDFIntegrityError(f"Cannot open PDF for signing: {exc}") from exc
+        raise PDFIntegrityError(
+            f"Cannot open PDF for signing: {exc}"
+        ) from exc
 
     # ── Build field spec + stamp style ────────────────────────────────────
     try:
         field_spec, stamp_style = _build_field_spec(metadata, reader)
     except Exception as exc:
-        raise SigningFailedError(f"Failed to build signature field spec: {exc}") from exc
+        raise SigningFailedError(
+            f"Failed to build signature field specification: {exc}"
+        ) from exc
 
     # ── Sign ──────────────────────────────────────────────────────────────
     try:
@@ -167,10 +187,11 @@ def _sign_with_pyhanko(
         )
         pdf_signer_obj.sign_pdf(writer, output=output_buf)
     except Exception as exc:
-        raise SigningFailedError(f"PdfSigner.sign_pdf failed: {exc}") from exc
+        raise SigningFailedError(
+            f"PdfSigner.sign_pdf failed: {exc}"
+        ) from exc
 
-    # ── Write output ──────────────────────────────────────────────────────
-    os.makedirs(os.path.dirname(output_pdf) or ".", exist_ok=True)
+    # ── Write result ──────────────────────────────────────────────────────
     with open(output_pdf, "wb") as fh:
         fh.write(output_buf.getvalue())
 
@@ -181,27 +202,27 @@ def _sign_with_pyhanko(
 
 def _build_field_spec(
     metadata: SignatureMetadata,
-    reader: Any,
+    reader:   Any,
 ) -> Tuple[Any, Optional[Any]]:
     """
-    Return (SigFieldSpec, stamp_style | None).
+    Return (SigFieldSpec, TextStampStyle | None).
 
     Visible appearance — clean box, no cursive watermark:
       Digitally signed by %(signer)s
       Date: %(ts)s
-      Reason: ...
-      Location: ...
+      Reason: ...   Location: ...
     """
     from pyhanko.sign.fields import SigFieldSpec, VisibleSigSettings
     from pyhanko.stamp import TextStampStyle
 
     vc = metadata.visible_config
 
-    # ── Page index ────────────────────────────────────────────────────────
+    # ── Determine page index ──────────────────────────────────────────────
     try:
         total_pages = int(reader.trailer["/Root"]["/Pages"]["/Count"])
     except Exception:
         total_pages = 1
+
     page_index = vc.page if vc.page >= 0 else total_pages + vc.page
     page_index = max(0, min(page_index, total_pages - 1))
 
@@ -216,10 +237,11 @@ def _build_field_spec(
             None,
         )
 
-    # ── Stamp text (Adobe Acrobat-style) ──────────────────────────────────
-    # %(signer)s  →  signer's Common Name from certificate
-    # %(ts)s      →  signing timestamp (formatted by timestamp_format)
-    lines = ["Digitally signed by %(signer)s", "Date: %(ts)s"]
+    # ── Stamp text (Adobe Acrobat style) ──────────────────────────────────
+    lines = [
+        "Digitally signed by %(signer)s",
+        "Date: %(ts)s",
+    ]
     if metadata.reason:
         lines.append(f"Reason: {metadata.reason}")
     if metadata.location:
@@ -228,8 +250,8 @@ def _build_field_spec(
     stamp_style = TextStampStyle(
         stamp_text         = "\n".join(lines),
         timestamp_format   = "%Y.%m.%d %H:%M:%S +00'00'",
-        border_width       = 0,    # no rectangle border
-        background_opacity = 0.0,  # transparent — eliminates any watermark tint
+        border_width       = 0,
+        background_opacity = 0.0,   # transparent — eliminates any watermark tint
     )
 
     vis_settings = VisibleSigSettings(

@@ -122,7 +122,10 @@ def load_certificate(cert_path: str, password: str) -> CertificateBundle:
     logger.info("Loading certificate: %s", cert_path)
 
     # 1. File existence
-    ensure_file_exists(cert_path, "Certificate file")
+    if not os.path.isfile(cert_path):
+        raise CertificateNotFoundError(
+            f"Certificate file not found: {cert_path}"
+        )
 
     # 2. Extension check
     _, ext = os.path.splitext(cert_path)

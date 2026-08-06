@@ -5,7 +5,28 @@ Each entry defines:
   required : fields that MUST be present and non-empty
   optional : fields that MAY be present; if absent, the placeholder is replaced
              with an empty string so ifthenelse guards in templates work
+
+Company-profile fields (CP_*) are injected automatically by api.py /
+_generate_direct_to() from the company_profile form data.  They are listed
+here as optional so the schema validator accepts them without error.
 """
+
+# ---------------------------------------------------------------------------
+# Shared company-profile optional fields present on EVERY document type.
+# The actual values arrive via the company_profile_json form field (API) or
+# are set to Turn2Law defaults in _build_company_profile_defaults().
+# ---------------------------------------------------------------------------
+_CP_OPTIONAL = [
+    "CP_Company_Name",
+    "CP_Signatory_Name",
+    "CP_Designation",
+    "CP_Company_Address",
+    "CP_Company_Email",
+    "CP_Company_Phone",
+    "CP_Company_Website",
+    "CP_Signature_Image",   # filename stem of uploaded signature PNG
+    "CP_Title_Suffix",      # appended to "Onboarding Letter" title — blank for custom mode
+]
 
 DOCUMENT_SCHEMAS = {
 
@@ -18,7 +39,7 @@ DOCUMENT_SCHEMAS = {
             "Joining_Date",
             "Document_Date",
         ],
-        "optional": [],
+        "optional": _CP_OPTIONAL,
     },
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -31,74 +52,74 @@ DOCUMENT_SCHEMAS = {
             "Jurisdiction",   # Seat of arbitration / governing court
         ],
         "optional": [
-            "Confidential_Info_Description",  # Specific CI description
-            "Governing_Law",                  # Additional governing law note
-        ],
+            "Confidential_Info_Description",
+            "Governing_Law",
+        ] + _CP_OPTIONAL,
     },
 
     # ─────────────────────────────────────────────────────────────────────────
     "Offer_Letter": {
         "required": [
-            "Name",       # Candidate's full name
-            "Company",    # Candidate's current address / company
-            "Position",   # Job title being offered
-            "Start_Date", # Date of joining
-            "Salary",     # Fixed CTC
+            "Name",
+            "Company",
+            "Position",
+            "Start_Date",
+            "Salary",
         ],
         "optional": [
-            "Manager_Name",          # Reporting manager
-            "Response_Date",         # Offer acceptance deadline
-            "HR_Manager",            # HR contact name
-            "Benefits_Description",  # Additional benefits narrative
-        ],
+            "Manager_Name",
+            "Response_Date",
+            "HR_Manager",
+            "Benefits_Description",
+        ] + _CP_OPTIONAL,
     },
 
     # ─────────────────────────────────────────────────────────────────────────
     "Contract": {
         "required": [
-            "Client_Name",            # Name of the client
-            "Company",                # Client's company / address
-            "Contract_Creation_Date", # Effective date
-            "Service_Description",    # Scope of services
-            "Payment_Amount",         # Total contract value
-            "Start_Date",             # Service period start
-            "End_Date",               # Service period end
+            "Client_Name",
+            "Company",
+            "Contract_Creation_Date",
+            "Service_Description",
+            "Payment_Amount",
+            "Start_Date",
+            "End_Date",
         ],
         "optional": [
-            "Payment_Schedule",   # Detailed payment milestones
-            "Termination_Clause", # Additional termination terms
-        ],
+            "Payment_Schedule",
+            "Termination_Clause",
+        ] + _CP_OPTIONAL,
     },
 
     # ─────────────────────────────────────────────────────────────────────────
     "MOU": {
         "required": [
-            "PartyA_Name",  # First party
-            "PartyB_Name",  # Second party
-            "Date",         # Effective date
-            "Purpose",      # Collaboration purpose
-            "Term",         # Duration
-            "Jurisdiction", # Governing jurisdiction
+            "PartyA_Name",
+            "PartyB_Name",
+            "Date",
+            "Purpose",
+            "Term",
+            "Jurisdiction",
         ],
         "optional": [
-            "Confidentiality",    # Custom confidentiality clause text
-            "Termination_Clause", # Additional termination terms
-            "Governing_Law",      # Additional governing law note
-        ],
+            "Confidentiality",
+            "Termination_Clause",
+            "Governing_Law",
+        ] + _CP_OPTIONAL,
     },
 
     # ─────────────────────────────────────────────────────────────────────────
     "IP_Agreement": {
         "required": [
-            "Name",         # Assignor's name
-            "Company",      # Assignor's company / address
-            "Date",         # Effective date
-            "Term",         # Duration of assignment obligations
-            "Jurisdiction", # Governing jurisdiction
+            "Name",
+            "Company",
+            "Date",
+            "Term",
+            "Jurisdiction",
         ],
         "optional": [
-            "IP_Description", # Specific description of assigned IP
-            "Governing_Law",  # Additional governing law note
-        ],
+            "IP_Description",
+            "Governing_Law",
+        ] + _CP_OPTIONAL,
     },
 }

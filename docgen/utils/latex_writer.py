@@ -1,30 +1,41 @@
+# coding: utf-8
 """
 latex_writer.py — Renders a LaTeX template with dynamic values and compiles
-                  it to a production-quality PDF.
+                  it to a production-quality PDF using XeLaTeX.
 
-Key fixes over the original:
-  1. pdflatex is invoked with -output-directory set to the template's own
-     directory, so graphicspath{{./images/}} resolves correctly regardless
-     of the Python process cwd.
-  2. Two compilation passes are performed so TikZ remember-picture/overlay
-     and eso-pic background layers render correctly on the first visual pass.
-  3. Compilation errors are captured and surfaced as Python exceptions rather
-     than silently failing.
-  4. Auxiliary files (.aux, .log) are left in the output directory but the
-     .tex intermediary is cleaned up only on success (kept on failure for
-     debugging).
-  5. The final PDF is copied to the caller-requested output_pdf path so the
-     API remains identical to the original.
+Pipeline:
+  1. Read template .tex source.
+  2. Inject absolute paths (FONTS / IMAGES / LAYOUTS placeholders).
+  3. Render brand_preamble_rendered.tex into the work directory.
+  4. If a custom preamble_path is provided (Branding Engine):
+       - Strip the template's own preamble block.
+       - Replace it with the custom brand preamble (fonts/images injected).
+       - Substitute T2L asset filenames in the body with profile PNGs.
+  5. LaTeX-escape all {{FIELD}} values and substitute them.
+  6. Clear residual unfilled optional {{FIELD}} tokens.
+  7. Write rendered .tex into the template work directory.
+  8. Run XeLaTeX passes 1 and 2 (TikZ needs two passes).
+  9. Copy compiled PDF to caller-requested output_pdf path.
 """
 
-import subprocess
+from __future__ import annotations
+
+import logging
 import os
+import re
 import shutil
+import subprocess
 import sys
 
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# XeLaTeX runner
+# ---------------------------------------------------------------------------
 
 def _run_xelatex(tex_path: str, work_dir: str, pass_num: int) -> None:
-    """Run a single xelatex pass and raise on failure."""
+    """Run a single XeLaTeX pass and raise RuntimeError on failure."""
     cmd = [
         "xelatex",
         "-interaction=nonstopmode",
@@ -48,6 +59,10 @@ def _run_xelatex(tex_path: str, work_dir: str, pass_num: int) -> None:
         )
 
 
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
 def render_latex(
     template_path: str,
     output_tex: str,
@@ -64,204 +79,194 @@ def render_latex(
     template_path : str
         Path to the source .tex template (relative or absolute).
     output_tex : str
-        Desired path for the rendered .tex file (used as the compilation
-        source; placed inside the template's directory so images resolve).
+        Desired path for the rendered .tex file (compilation source).
+        The file is always placed in the template directory regardless
+        of this path's directory component — the basename is used.
     output_pdf : str
         Final destination for the compiled .pdf.
     values : dict
         Mapping of ``{{KEY}}`` placeholder names to replacement strings.
-        Values are LaTeX-escaped before substitution.
+        Values are LaTeX-escaped before substitution (except CP_* keys
+        which get lighter treatment to preserve special LaTeX tokens).
     preamble_path : str | None
         Optional absolute path to a custom brand preamble .tex file
-        (supplied by the Branding Engine).  When provided, the
-        ``\\input{...brand_preamble...}`` token in the template is
-        replaced with a reference to this file.  When None (default),
-        existing behaviour is preserved.
+        (supplied by the Branding Engine).  When provided the template's
+        built-in preamble is swapped out for the custom one.
+        When None, existing T2L branding behaviour is preserved.
     """
     template_path = os.path.abspath(template_path)
     output_tex    = os.path.abspath(output_tex)
     output_pdf    = os.path.abspath(output_pdf)
 
-    # Work directory == directory that contains the template so that
-    # \graphicspath{{./images/}} and other relative paths resolve correctly.
+    # Work directory = template directory so \graphicspath and \input resolve
     work_dir = os.path.dirname(template_path)
 
-    # Resolve the images directory and fonts directory — always docgen/images/
-    # and docgen/fonts/ regardless of where the template lives.
-    images_dir = os.path.join(os.path.dirname(template_path), "..", "images")
-    images_dir = os.path.abspath(images_dir).replace("\\", "/") + "/"
-    fonts_dir  = os.path.join(os.path.dirname(template_path), "..", "fonts")
-    fonts_dir  = os.path.abspath(fonts_dir).replace("\\", "/") + "/"
-    layouts_dir = os.path.join(os.path.dirname(template_path), "..", "layouts")
-    layouts_dir = os.path.abspath(layouts_dir).replace("\\", "/") + "/"
+    # Compute absolute paths for all resource directories
+    _base = os.path.dirname(template_path)   # docgen/templates/
+    images_dir  = os.path.normpath(os.path.join(_base, "..", "images")).replace("\\", "/") + "/"
+    fonts_dir   = os.path.normpath(os.path.join(_base, "..", "fonts")).replace("\\", "/") + "/"
+    layouts_dir = os.path.normpath(os.path.join(_base, "..", "layouts")).replace("\\", "/") + "/"
 
-    # Read template
-    with open(template_path, "r", encoding="utf-8") as f:
-        tex = f.read()
+    # ── 1. Read template ─────────────────────────────────────────────────────
+    with open(template_path, "r", encoding="utf-8") as fh:
+        tex = fh.read()
 
-    # Inject absolute paths
-    tex = tex.replace(
-        r"\graphicspath{{IMAGES_DIR_PLACEHOLDER}}",
-        r"\graphicspath{{" + images_dir + r"}}",
-    )
-    tex = tex.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
+    # ── 2. Inject absolute resource paths ────────────────────────────────────
+    tex = tex.replace(r"\graphicspath{{IMAGES_DIR_PLACEHOLDER}}",
+                      r"\graphicspath{{" + images_dir + r"}}")
+    tex = tex.replace("FONTS_DIR_PLACEHOLDER",   fonts_dir)
     tex = tex.replace("LAYOUTS_DIR_PLACEHOLDER", layouts_dir)
 
-    # Also inject paths into the brand_preamble if it is being compiled
-    # as a standalone file (it uses the same placeholders)
-    _t2l_preamble_path = os.path.join(layouts_dir.rstrip("/"), "brand_preamble.tex")
-    if os.path.exists(_t2l_preamble_path):
-        with open(_t2l_preamble_path, "r", encoding="utf-8") as f:
-            preamble = f.read()
-        rendered_preamble = preamble.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
-        rendered_preamble = rendered_preamble.replace("IMAGES_DIR_PLACEHOLDER", images_dir)
-        rendered_preamble_path = os.path.join(
-            os.path.dirname(template_path), "..", "layouts", "brand_preamble_rendered.tex"
+    # ── 3. Render brand_preamble into work_dir (Turn2Law default mode) ───────
+    _t2l_preamble_src = os.path.join(layouts_dir.rstrip("/"), "brand_preamble.tex")
+    if os.path.exists(_t2l_preamble_src):
+        with open(_t2l_preamble_src, "r", encoding="utf-8") as fh:
+            _preamble_raw = fh.read()
+        _preamble_rendered = (
+            _preamble_raw
+            .replace("FONTS_DIR_PLACEHOLDER",  fonts_dir)
+            .replace("IMAGES_DIR_PLACEHOLDER", images_dir)
         )
-        rendered_preamble_path = os.path.abspath(rendered_preamble_path)
-        with open(rendered_preamble_path, "w", encoding="utf-8") as f:
-            f.write(rendered_preamble)
-        # Point \input to the rendered version
+        # Write into the work directory (next to the template)
+        _rendered_path = os.path.join(work_dir, "brand_preamble_rendered.tex")
+        with open(_rendered_path, "w", encoding="utf-8") as fh:
+            fh.write(_preamble_rendered)
+        # Redirect the template's \input to the rendered copy
         tex = tex.replace(
             r"\input{" + layouts_dir + r"brand_preamble}",
             r"\input{" + layouts_dir + r"brand_preamble_rendered}",
         )
 
-    # If a custom preamble_path is supplied by the Branding Engine,
-    # the templates embed T2L assets directly in their preamble — there is no
-    # \input{brand_preamble} token to replace.  Instead we:
-    #   1. Strip the entire LaTeX preamble from the template (everything before
-    #      \begin{document}) and replace it with the custom brand preamble.
-    #   2. Substitute T2L asset filenames inside \begin{document}...\end{document}
-    #      with the profile's processed PNGs if they exist, or blank them out safely.
+    # ── 4. Custom preamble swap (Branding Engine) ─────────────────────────────
     if preamble_path is not None:
-        import re as _re
+        _custom_abs  = os.path.abspath(preamble_path)
+        _profile_dir = os.path.dirname(_custom_abs).replace("\\", "/") + "/"
 
-        _custom_preamble_abs = os.path.abspath(preamble_path)
-        _profile_dir = os.path.dirname(_custom_preamble_abs).replace("\\", "/") + "/"
-
-        # Read and render the custom preamble (inject font/image dir tokens)
-        with open(_custom_preamble_abs, "r", encoding="utf-8") as _fh:
-            _custom_preamble_tex = _fh.read()
-        _custom_preamble_tex = _custom_preamble_tex.replace("FONTS_DIR_PLACEHOLDER", fonts_dir)
-        _custom_preamble_tex = _custom_preamble_tex.replace("IMAGES_DIR_PLACEHOLDER", images_dir)
-
-        # Build mapping: T2L asset name → replacement path (or None if missing)
-        _asset_map = {
-            "header_decoration":    _profile_dir + "header.png",
-            "footer_decoration":    _profile_dir + "footer.png",
-            "sample_asset_0_xref_36": _profile_dir + "watermark.png",
-            "watermark_logo_n":     _profile_dir + "watermark.png",
-            "footer_icon_xref47":   _profile_dir + "logo.png",
-        }
-        # Also check logo.png separately for logo asset
-        _logo_path = _profile_dir + "logo.png"
-        if os.path.isfile(_logo_path):
-            _asset_map["sample_asset_0_xref_36"] = _logo_path  # logo in body textblock
-
-        # Split template at \begin{document}
-        _split = tex.split(r"\begin{document}", 1)
-        if len(_split) == 2:
-            _doc_body = r"\begin{document}" + _split[1]
-
-            # For each T2L asset name, substitute paths if file exists.
-            # The pattern matches {assetname} or {assetname.ext} inside
-            # \includegraphics arguments — simple and reliable.
-            for _t2l_name, _dest_path in _asset_map.items():
-                _pat = r"\{" + _re.escape(_t2l_name) + r"(\.[a-zA-Z]+)?\}"
-                if os.path.isfile(_dest_path):
-                    _doc_body = _re.sub(_pat, "{" + _dest_path + "}", _doc_body)
-                else:
-                    # Asset doesn't exist in this profile.
-                    # Replace the entire \includegraphics[...]{assetname} call
-                    # with an empty \mbox{} so the surrounding textblock/node
-                    # doesn't choke XeLaTeX.
-                    _inc_pat = (
-                        r"\\includegraphics(?:\[[^\]]*\])?\s*\{"
-                        + _re.escape(_t2l_name)
-                        + r"(\.[a-zA-Z]+)?\}"
-                    )
-                    _doc_body = _re.sub(_inc_pat, r"\\mbox{}", _doc_body, flags=_re.DOTALL)
-
-            # Rebuild with custom preamble replacing the original template preamble
-            _doc_class_match = _re.match(r"(\s*\\documentclass[^\n]*\n)", tex)
-            _doc_class = (
-                _doc_class_match.group(1) if _doc_class_match
-                else "\\documentclass[10pt]{article}\n"
-            )
-            tex = _doc_class + "\n" + _custom_preamble_tex + "\n" + _doc_body
-
-    # Replace all {{KEY}} placeholders with escaped values.
-    # Optional fields not provided by the caller are replaced with empty string
-    # so that \ifthenelse{\equal{...}{}}{}{...} guards in templates work correctly.
-    from schema import DOCUMENT_SCHEMAS  # late import avoids circular dep
-    all_optional = set()
-    for schema in DOCUMENT_SCHEMAS.values():
-        all_optional.update(schema.get("optional", []))
-
-    for key, raw_value in values.items():
-        tex = tex.replace(f"{{{{{key}}}}}", _escape_latex(raw_value))
-
-    # Replace any remaining {{KEY}} (optional fields not supplied) with ""
-    import re
-    tex = re.sub(r"\{\{[A-Za-z_]+\}\}", "", tex)
-
-    # Write rendered .tex into the work directory (next to the template)
-    rendered_tex = os.path.join(work_dir, os.path.basename(output_tex))
-    with open(rendered_tex, "w", encoding="utf-8") as f:
-        f.write(tex)
-
-    try:
-        # Pass 1 — layout + TikZ coordinate recording
-        _run_xelatex(rendered_tex, work_dir, pass_num=1)
-        # Pass 2 — TikZ overlay + eso-pic background correct on this pass
-        _run_xelatex(rendered_tex, work_dir, pass_num=2)
-    except RuntimeError:
-        # Keep rendered_tex for post-mortem inspection
-        raise
-
-    # Derive where pdflatex wrote the PDF (same dir as rendered_tex, .pdf ext)
-    compiled_pdf = os.path.splitext(rendered_tex)[0] + ".pdf"
-
-    if not os.path.exists(compiled_pdf):
-        raise FileNotFoundError(
-            f"pdflatex reported success but output PDF not found: {compiled_pdf}"
+        # Read and inject paths into the custom preamble
+        with open(_custom_abs, "r", encoding="utf-8") as fh:
+            _cp_tex = fh.read()
+        _cp_tex = (
+            _cp_tex
+            .replace("FONTS_DIR_PLACEHOLDER",  fonts_dir)
+            .replace("IMAGES_DIR_PLACEHOLDER", images_dir)
         )
 
-    # Copy to caller-requested location (may be outside work_dir)
-    if os.path.abspath(compiled_pdf) != output_pdf:
+        # Map T2L asset names → processed PNGs in the profile directory
+        _asset_map: dict[str, str] = {
+            "header_decoration":      _profile_dir + "header.png",
+            "footer_decoration":      _profile_dir + "footer.png",
+            "sample_asset_0_xref_36": _profile_dir + "logo.png"
+                                      if os.path.isfile(_profile_dir + "logo.png")
+                                      else _profile_dir + "watermark.png",
+            "watermark_logo_n":       _profile_dir + "watermark.png",
+            "footer_icon_xref47":     _profile_dir + "logo.png",
+            "sample_asset_1_xref_47": _profile_dir + "logo.png",
+            "sample_asset_2_xref_36": _profile_dir + "watermark.png",
+            "sample_asset_3_xref_63": _profile_dir + "logo.png",
+        }
+
+        # Split at \begin{document}
+        _parts = tex.split(r"\begin{document}", 1)
+        if len(_parts) == 2:
+            _body = r"\begin{document}" + _parts[1]
+
+            # Substitute or blank out each T2L asset reference
+            for _name, _dest in _asset_map.items():
+                _pat_inc = (
+                    r"\\includegraphics(?:\[[^\]]*\])?\s*\{"
+                    + re.escape(_name)
+                    + r"(?:\.[a-zA-Z]+)?\}"
+                )
+                if os.path.isfile(_dest):
+                    _body = re.sub(
+                        _pat_inc,
+                        lambda m, d=_dest: m.group(0).rsplit("{", 1)[0] + "{" + d + "}",
+                        _body,
+                        flags=re.DOTALL,
+                    )
+                else:
+                    _body = re.sub(_pat_inc, r"\\mbox{}", _body, flags=re.DOTALL)
+
+            # Extract the \documentclass line
+            _dc_match = re.match(r"(\s*\\documentclass[^\n]*\n)", tex)
+            _dc = _dc_match.group(1) if _dc_match else "\\documentclass[10pt]{article}\n"
+
+            tex = _dc + "\n" + _cp_tex + "\n" + _body
+
+    # ── 5. Substitute {{FIELD}} tokens ───────────────────────────────────────
+    # CP_Signature_Image: raw filename, no escaping at all
+    _NO_ESCAPE = {"CP_Signature_Image"}
+
+    # CP_* text fields: only escape & → \& (names, titles, addresses)
+    _AMP_ONLY = {
+        "CP_Company_Name", "CP_Signatory_Name", "CP_Designation",
+        "CP_Company_Address", "CP_Company_Email", "CP_Company_Phone",
+        "CP_Company_Website", "CP_Title_Suffix",
+    }
+
+    for key, raw_value in values.items():
+        placeholder = "{{" + key + "}}"
+        if key in _NO_ESCAPE:
+            tex = tex.replace(placeholder, str(raw_value))
+        elif key in _AMP_ONLY:
+            tex = tex.replace(placeholder, str(raw_value).replace("&", r"\&"))
+        else:
+            tex = tex.replace(placeholder, _escape_latex(str(raw_value)))
+
+    # ── 6. Clear residual unfilled optional tokens ───────────────────────────
+    tex = re.sub(r"\{\{[A-Za-z_]+\}\}", "", tex)
+
+    # ── 7. Write rendered .tex into work directory ───────────────────────────
+    rendered_tex = os.path.join(work_dir, os.path.basename(output_tex))
+    with open(rendered_tex, "w", encoding="utf-8") as fh:
+        fh.write(tex)
+
+    # ── 8. Compile (2 passes for TikZ overlays) ──────────────────────────────
+    try:
+        _run_xelatex(rendered_tex, work_dir, pass_num=1)
+        _run_xelatex(rendered_tex, work_dir, pass_num=2)
+    except RuntimeError:
+        # Keep rendered_tex for post-mortem debugging
+        raise
+
+    # ── 9. Copy compiled PDF to caller-requested destination ─────────────────
+    compiled_pdf = os.path.splitext(rendered_tex)[0] + ".pdf"
+    if not os.path.exists(compiled_pdf):
+        raise FileNotFoundError(
+            f"XeLaTeX reported success but output PDF not found: {compiled_pdf}"
+        )
+
+    output_pdf_dir = os.path.dirname(output_pdf)
+    if output_pdf_dir:
+        os.makedirs(output_pdf_dir, exist_ok=True)
+
+    if os.path.abspath(compiled_pdf) != os.path.abspath(output_pdf):
         shutil.copy2(compiled_pdf, output_pdf)
 
-    print(f"[latex_writer] PDF written to: {output_pdf}", file=sys.stderr)
+    logger.info("PDF written to: %s", output_pdf)
 
 
 # ---------------------------------------------------------------------------
 # LaTeX string escaping
 # ---------------------------------------------------------------------------
-_LATEX_ESCAPE_MAP = [
-    ("\\", r"\textbackslash{}"),   # must be first
-    ("&",  r"\&"),
-    ("%",  r"\%"),
-    ("$",  r"\$"),
-    ("#",  r"\#"),
-    ("_",  r"\_"),
-    ("{",  r"\{"),
-    ("}",  r"\}"),
-    ("~",  r"\textasciitilde{}"),
-    ("^",  r"\textasciicircum{}"),
-]
-
 
 def _escape_latex(value: str) -> str:
     """
     Escape special LaTeX characters in a user-supplied string.
 
-    This prevents injection via employee names, roles, or other fields
-    that might contain characters meaningful to LaTeX.
+    Processes character-by-character to prevent double-escaping.
     """
-    # Avoid double-escaping the backslash we insert ourselves
-    result = value.replace("\\", "\x00BACKSLASH\x00")
-    for char, replacement in _LATEX_ESCAPE_MAP[1:]:
-        result = result.replace(char, replacement)
-    result = result.replace("\x00BACKSLASH\x00", r"\textbackslash{}")
-    return result
+    result: list[str] = []
+    for ch in value:
+        if   ch == '\\': result.append(r'\textbackslash{}')
+        elif ch == '&':  result.append(r'\&')
+        elif ch == '%':  result.append(r'\%')
+        elif ch == '$':  result.append(r'\$')
+        elif ch == '#':  result.append(r'\#')
+        elif ch == '_':  result.append(r'\_')
+        elif ch == '{':  result.append(r'\{')
+        elif ch == '}':  result.append(r'\}')
+        elif ch == '~':  result.append(r'\textasciitilde{}')
+        elif ch == '^':  result.append(r'\textasciicircum{}')
+        else:            result.append(ch)
+    return ''.join(result)

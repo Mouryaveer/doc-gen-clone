@@ -1,43 +1,63 @@
-# ===============================
+# =============================================================================
+# Turn2Law Document Generation Engine — .gitignore
+# =============================================================================
+
 # Python
-# ===============================
-# __pycache__/
+__pycache__/
 *.py[cod]
 *$py.class
+*.pyo
 
-# ==============================
-# Virtual Environments
-# ==============================
+# Virtual environments
 .venv/
 venv/
 env/
-
-
-# ===============================
-# Environment Variables
-# ===============================
 .env
 
-# ===============================
-# Logs & Runtime Artifacts
-# ===============================
-# *.log
-# output.log
+# Secrets and certificates — NEVER commit these
+*.pfx
+*.p12
+*.key
+*.pem
 
-# ===============================
-# Generated Outputs
-# ===============================
-# output.pdf
-# output.tex
-# output.aux
-# *.aux
-# *.out
-# *.toc
-# *.lof
-# *.lot
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+brand_preamble_rendered.tex
 
-# ===============================
-# PDFs
-# ===============================
-# sample.pdf
-#.pfx
+# Generated PDFs and TeX files (runtime outputs)
+docgen/output*.pdf
+docgen/output*.tex
+docgen/output*.aux
+docgen/output*.log
+docgen/test_*.pdf
+docgen/test_*.tex
+docgen/templates/*.pdf
+docgen/templates/*.tex
+docgen/templates/*.aux
+docgen/templates/*.log
+
+# Generated documents directory (runtime output)
+docgen/generated_docs/
+
+# Branding profiles (runtime — contain processed PNGs and generated preambles)
+docgen/branding/profiles/
+
+# Preview images (runtime)
+docgen/output_preview*.png
+docgen/output_branded.*
+docgen/output_nda.*
+docgen/output_signed*.*
+docgen/test_synkspace.*
+docgen/sample.pdf
+
+# VS Code
+.vscode/
+
+# pytest
+.pytest_cache/

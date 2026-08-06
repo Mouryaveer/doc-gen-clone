@@ -882,15 +882,62 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;tra
         <input type="file" accept="image/png" class="upload-file-input" id="lhFileInput"
           aria-label="Letterhead PNG upload" onchange="handleLhUpload(this.files[0])">
         <div id="lhValidationMsg" class="lh-validation-msg" style="display:none"></div>
-        <div class="brand-profile-fields" style="margin-top:14px">
-          <div class="field">
-            <label for="lhCompanyName">Company Name <span class="req">*</span></label>
-            <input type="text" id="lhCompanyName" placeholder="e.g. MotionComm Technologies" aria-required="true"
-              oninput="autoLhProfileId(this.value)">
+        <!-- Company Details for letterhead mode -->
+        <div style="margin-top:18px;border:1px solid var(--line);border-radius:var(--r);padding:20px;background:var(--bg-tint)">
+          <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Company &amp; Signatory Details
           </div>
-          <div class="field">
-            <label for="lhProfileId">Profile ID</label>
-            <input type="text" id="lhProfileId" placeholder="auto-generated" aria-label="Profile ID (auto-generated)">
+          <div class="form-grid">
+            <div class="field">
+              <label for="lhCompanyName">Company Name <span class="req">*</span></label>
+              <input type="text" id="lhCompanyName" placeholder="e.g. SynkSpace Technologies Pvt. Ltd." aria-required="true"
+                oninput="autoLhProfileId(this.value); syncCpField('lhCompanyName','CP_Company_Name')">
+            </div>
+            <div class="field">
+              <label for="lhProfileId">Profile ID</label>
+              <input type="text" id="lhProfileId" placeholder="auto-generated" aria-label="Profile ID">
+            </div>
+            <div class="field">
+              <label for="lhSignatoryName">Authorised Signatory Name <span class="req">*</span></label>
+              <input type="text" id="lhSignatoryName" placeholder="e.g. Arjun Mehta" aria-required="true"
+                oninput="syncCpField('lhSignatoryName','CP_Signatory_Name')">
+            </div>
+            <div class="field">
+              <label for="lhDesignation">Designation <span class="req">*</span></label>
+              <input type="text" id="lhDesignation" placeholder="e.g. Founder &amp; CEO" aria-required="true"
+                oninput="syncCpField('lhDesignation','CP_Designation')">
+            </div>
+            <div class="field full">
+              <label for="lhAddress">Company Address</label>
+              <input type="text" id="lhAddress" placeholder="Full registered address"
+                oninput="syncCpField('lhAddress','CP_Company_Address')">
+            </div>
+            <div class="field">
+              <label for="lhEmail">Company Email</label>
+              <input type="email" id="lhEmail" placeholder="info@company.com"
+                oninput="syncCpField('lhEmail','CP_Company_Email')">
+            </div>
+            <div class="field">
+              <label for="lhPhone">Phone</label>
+              <input type="text" id="lhPhone" placeholder="+91 98765 43210"
+                oninput="syncCpField('lhPhone','CP_Company_Phone')">
+            </div>
+            <div class="field full">
+              <label>Signature Image <span style="font-weight:400;color:var(--gray);font-size:12px">(optional PNG)</span></label>
+              <div class="asset-upload" id="lhSigZone" role="button" tabindex="0"
+                aria-label="Upload signature PNG"
+                onclick="document.getElementById('lhSigInput').click()"
+                onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('lhSigInput').click()">
+                <div id="lhSigPlaceholder" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                  Upload signature PNG (optional)
+                </div>
+                <div id="lhSigPreview" style="display:none" class="asset-preview"></div>
+              </div>
+              <input type="file" accept="image/png" class="upload-file-input" id="lhSigInput"
+                onchange="handleSigUpload('lh',this.files[0])">
+            </div>
           </div>
         </div>
       </div>
@@ -969,11 +1016,51 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;tra
           <div class="field">
             <label for="brandCompanyName">Company Name <span class="req">*</span></label>
             <input type="text" id="brandCompanyName" placeholder="e.g. Acme Legal Solutions" aria-required="true"
-              oninput="autoProfileId(this.value)">
+              oninput="autoProfileId(this.value); syncCpField('brandCompanyName','CP_Company_Name')">
           </div>
           <div class="field">
             <label for="brandProfileId">Profile ID</label>
-            <input type="text" id="brandProfileId" placeholder="auto-generated" aria-label="Brand profile ID (auto-generated from company name)">
+            <input type="text" id="brandProfileId" placeholder="auto-generated" aria-label="Brand profile ID">
+          </div>
+          <div class="field">
+            <label for="brandSignatoryName">Authorised Signatory Name <span class="req">*</span></label>
+            <input type="text" id="brandSignatoryName" placeholder="e.g. Priya Sharma" aria-required="true"
+              oninput="syncCpField('brandSignatoryName','CP_Signatory_Name')">
+          </div>
+          <div class="field">
+            <label for="brandDesignation">Designation <span class="req">*</span></label>
+            <input type="text" id="brandDesignation" placeholder="e.g. Managing Director" aria-required="true"
+              oninput="syncCpField('brandDesignation','CP_Designation')">
+          </div>
+          <div class="field full">
+            <label for="brandAddress">Company Address</label>
+            <input type="text" id="brandAddress" placeholder="Full registered address"
+              oninput="syncCpField('brandAddress','CP_Company_Address')">
+          </div>
+          <div class="field">
+            <label for="brandEmail">Company Email</label>
+            <input type="email" id="brandEmail" placeholder="info@company.com"
+              oninput="syncCpField('brandEmail','CP_Company_Email')">
+          </div>
+          <div class="field">
+            <label for="brandPhone">Phone</label>
+            <input type="text" id="brandPhone" placeholder="+91 98765 43210"
+              oninput="syncCpField('brandPhone','CP_Company_Phone')">
+          </div>
+          <div class="field full">
+            <label>Signature Image <span style="font-weight:400;color:var(--gray);font-size:12px">(optional PNG)</span></label>
+            <div class="asset-upload" id="brandSigZone" role="button" tabindex="0"
+              aria-label="Upload signature PNG"
+              onclick="document.getElementById('brandSigInput').click()"
+              onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('brandSigInput').click()">
+              <div id="brandSigPlaceholder" style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                Upload signature PNG (optional)
+              </div>
+              <div id="brandSigPreview" style="display:none" class="asset-preview"></div>
+            </div>
+            <input type="file" accept="image/png" class="upload-file-input" id="brandSigInput"
+              onchange="handleSigUpload('brand',this.files[0])">
           </div>
         </div>
       </div>
@@ -1256,7 +1343,13 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;pointer-events:auto;tra
 /* ============================================================
    TURN2LAW DOC ENGINE — App State & Config
    ============================================================ */
-const API = 'http://localhost:8000';
+// API base — auto-detects: empty string when served through FastAPI (/app/...),
+// falls back to http://localhost:8000 only when opened as a raw file://.
+const API = (() => {
+  if (window.location.protocol === 'file:') return 'http://localhost:8000';
+  // Served via FastAPI static mount — use same origin, no prefix needed
+  return '';
+})();
 
 const ICONS = {
   'user-plus': `<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>`,
@@ -1286,7 +1379,9 @@ const state = {
   brandAssets: {},
   brandProfileId: null,
   brandProfileName: null,
-  letterheadFile: null,      // File — complete letterhead mode
+  letterheadFile: null,        // File — complete letterhead mode
+  companyProfile: {},          // { CP_Company_Name, CP_Signatory_Name, ... }
+  signatureFile: null,         // File — customer signature PNG
   docId: null,
   pdfUrl: null,
   signedPdfUrl: null,
@@ -1305,21 +1400,27 @@ const DRAFT_KEY = 't2l_draft';
 function goToStep(n) {
   const prev = state.currentStep;
   state.currentStep = n;
-  // hide previous, show next
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById('panel-' + n);
   if (panel) panel.classList.add('active');
-  // update sidebar
   updateSidebar(n);
   updateMobileProgress(n);
-  // step entry hooks
+  // Step entry hooks
   if (n === 3 && (!state.schemaRequired.length)) loadSchema(state.selectedDocType);
   if (n === 5) renderReview();
-  if (n === 6) generateDocument();
+  if (n === 6) {
+    // Reset generation UI so re-generate shows a clean timeline
+    document.getElementById('genError').style.display = 'none';
+    for (let i = 0; i < 6; i++) {
+      const el = document.getElementById('gstep-' + i);
+      if (el) el.className = 'gen-step';
+    }
+    setGenProgress(0);
+    generateDocument();
+  }
   if (n === 7) loadPdfPreview();
   if (n === 9) populateDownloadPage();
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // focus management
   const titleEl = document.querySelector('#panel-' + n + ' .step-title');
   if (titleEl) { titleEl.setAttribute('tabindex', '-1'); titleEl.focus(); }
 }
@@ -1346,7 +1447,9 @@ function updateMobileProgress(current) {
   strip.innerHTML = steps.map((label, i) => {
     const n = i + 1;
     const cls = n === current ? 'active' : n < current ? 'done' : '';
-    return `<button class="mp-step ${cls}" onclick="goToStep(${n})" aria-label="Step ${n}: ${label}"${n > current ? ' disabled' : ''}>
+    const disabled = n > current;
+    return `<button class="mp-step ${cls}" onclick="${disabled ? '' : `goToStep(${n})`}"
+      aria-label="Step ${n}: ${label}" ${disabled ? 'aria-disabled="true" tabindex="-1"' : ''}>
       <span class="mp-dot"></span>${n}. ${label}
     </button>`;
   }).join('');
@@ -1660,6 +1763,52 @@ function selectBranding(mode) {
   adv.classList.toggle('visible', mode === 'custom');
 }
 
+/* ── Company profile helpers ── */
+
+/**
+ * Sync a form input value into state.companyProfile under a CP_ key.
+ * Called via oninput on every company-detail field.
+ */
+function syncCpField(inputId, cpKey) {
+  const el = document.getElementById(inputId);
+  if (el) state.companyProfile[cpKey] = el.value.trim();
+}
+
+/**
+ * Handle signature image uploads (shared by letterhead and custom modes).
+ * prefix: 'lh' | 'brand'
+ */
+function handleSigUpload(prefix, file) {
+  if (!file) return;
+  if (!file.type.includes('png')) {
+    showToast('Only PNG files are accepted for the signature.', 'error'); return;
+  }
+  state.signatureFile = file;
+  const preview = document.getElementById(prefix + 'SigPreview');
+  const placeholder = document.getElementById(prefix + 'SigPlaceholder');
+  const url = URL.createObjectURL(file);
+  const sizeKb = (file.size / 1024).toFixed(1);
+  preview.innerHTML = `
+    <img src="${url}" alt="Signature preview" style="max-height:48pt;max-width:80px;border-radius:4px;object-fit:contain">
+    <div class="asset-preview-info">
+      <div class="asset-preview-name">${file.name}</div>
+      <div class="asset-preview-size">${sizeKb} KB</div>
+    </div>
+    <button class="asset-remove" onclick="removeSig('${prefix}',event)" aria-label="Remove signature image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  preview.style.display = 'flex';
+  placeholder.style.display = 'none';
+}
+
+function removeSig(prefix, e) {
+  e.stopPropagation();
+  state.signatureFile = null;
+  document.getElementById(prefix + 'SigInput').value = '';
+  document.getElementById(prefix + 'SigPreview').style.display = 'none';
+  document.getElementById(prefix + 'SigPlaceholder').style.display = 'flex';
+}
+
 function handleLhUpload(file) {
   if (!file) return;
   const msg = document.getElementById('lhValidationMsg');
@@ -1828,9 +1977,29 @@ function validateAndGoStep5() {
       showToast('Company name is required.', 'error');
       document.getElementById('lhCompanyName').focus(); return;
     }
+    const signatoryName = document.getElementById('lhSignatoryName').value.trim();
+    if (!signatoryName) {
+      showToast('Authorised signatory name is required.', 'error');
+      document.getElementById('lhSignatoryName').focus(); return;
+    }
+    const designation = document.getElementById('lhDesignation').value.trim();
+    if (!designation) {
+      showToast('Designation is required.', 'error');
+      document.getElementById('lhDesignation').focus(); return;
+    }
     state.brandProfileName = companyName;
     state.brandProfileId   = document.getElementById('lhProfileId').value.trim()
       || companyName.toLowerCase().replace(/\W+/g,'_');
+    // Collect full company profile
+    state.companyProfile = {
+      CP_Company_Name:    companyName,
+      CP_Signatory_Name:  signatoryName,
+      CP_Designation:     designation,
+      CP_Company_Address: document.getElementById('lhAddress').value.trim(),
+      CP_Company_Email:   document.getElementById('lhEmail').value.trim(),
+      CP_Company_Phone:   document.getElementById('lhPhone').value.trim(),
+      CP_Title_Suffix:    '',
+    };
   } else if (state.brandingMode === 'custom') {
     if (!state.brandAssets.header) {
       showToast('Header image is required for custom branding.', 'error'); return;
@@ -1840,8 +2009,32 @@ function validateAndGoStep5() {
       showToast('Company name is required for custom branding.', 'error');
       document.getElementById('brandCompanyName').focus(); return;
     }
+    const signatoryName = document.getElementById('brandSignatoryName').value.trim();
+    if (!signatoryName) {
+      showToast('Authorised signatory name is required.', 'error');
+      document.getElementById('brandSignatoryName').focus(); return;
+    }
+    const designation = document.getElementById('brandDesignation').value.trim();
+    if (!designation) {
+      showToast('Designation is required.', 'error');
+      document.getElementById('brandDesignation').focus(); return;
+    }
     state.brandProfileName = companyName;
-    state.brandProfileId = document.getElementById('brandProfileId').value.trim() || companyName.toLowerCase().replace(/\W+/g,'_');
+    state.brandProfileId = document.getElementById('brandProfileId').value.trim()
+      || companyName.toLowerCase().replace(/\W+/g,'_');
+    // Collect full company profile
+    state.companyProfile = {
+      CP_Company_Name:    companyName,
+      CP_Signatory_Name:  signatoryName,
+      CP_Designation:     designation,
+      CP_Company_Address: document.getElementById('brandAddress').value.trim(),
+      CP_Company_Email:   document.getElementById('brandEmail').value.trim(),
+      CP_Company_Phone:   document.getElementById('brandPhone').value.trim(),
+      CP_Title_Suffix:    '',
+    };
+  } else {
+    // turn2law mode — no company profile override needed
+    state.companyProfile = {};
   }
   goToStep(5);
 }
@@ -1935,8 +2128,7 @@ async function generateDocument() {
     }
     document.getElementById('genError').style.display = 'block';
     document.getElementById('genErrorMsg').textContent = e.message;
-    showToast('Generation failed: ' + e.message, 'error');
-  }
+    showToast('Generation failed: ' + e.message, 'error');  }
 }
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -1963,35 +2155,49 @@ function setGenProgress(pct) {
   if (bar) bar.setAttribute('aria-valuenow', pct);
 }
 
-async function callGenerateAPI() {
+function callGenerateAPI() {
+  const cpJson = Object.keys(state.companyProfile).length
+    ? JSON.stringify(state.companyProfile) : null;
+
   if (state.brandingMode === 'letterhead') {
+    if (!state.letterheadFile) {
+      return Promise.reject(new Error('No letterhead file uploaded. Please go back to Step 4 and upload your letterhead PNG.'));
+    }
     const fd = new FormData();
     fd.append('doc_type', state.selectedDocType);
     fd.append('fields_json', JSON.stringify(state.formData));
     fd.append('profile_id', state.brandProfileId || 'lh_' + Date.now());
     fd.append('profile_name', state.brandProfileName || 'Letterhead');
     fd.append('letterhead_image', state.letterheadFile);
-    const res = await fetch(`${API}/api/generate-with-letterhead`, { method: 'POST', body: fd });
-    return res.json();
+    if (cpJson) fd.append('company_profile_json', cpJson);
+    if (state.signatureFile) fd.append('signature_image', state.signatureFile);
+    return fetch(`${API}/api/generate-with-letterhead`, { method: 'POST', body: fd }).then(r => r.json());
+
   } else if (state.brandingMode === 'custom') {
+    if (!state.brandAssets.header) {
+      return Promise.reject(new Error('No header image uploaded. Please go back to Step 4 and upload a header PNG.'));
+    }
     const fd = new FormData();
     fd.append('doc_type', state.selectedDocType);
     fd.append('fields_json', JSON.stringify(state.formData));
-    fd.append('profile_id', state.brandProfileId || 'custom');
+    fd.append('profile_id', state.brandProfileId || ('custom_' + Date.now()));
     fd.append('profile_name', state.brandProfileName || 'Custom');
-    if (state.brandAssets.header) fd.append('header_image', state.brandAssets.header);
-    if (state.brandAssets.footer) fd.append('footer_image', state.brandAssets.footer);
+    fd.append('header_image', state.brandAssets.header);
+    if (state.brandAssets.footer)    fd.append('footer_image',    state.brandAssets.footer);
     if (state.brandAssets.watermark) fd.append('watermark_image', state.brandAssets.watermark);
-    if (state.brandAssets.logo) fd.append('logo_image', state.brandAssets.logo);
-    const res = await fetch(`${API}/api/generate-with-branding`, { method: 'POST', body: fd });
-    return res.json();
+    if (state.brandAssets.logo)      fd.append('logo_image',      state.brandAssets.logo);
+    if (cpJson) fd.append('company_profile_json', cpJson);
+    if (state.signatureFile) fd.append('signature_image', state.signatureFile);
+    return fetch(`${API}/api/generate-with-branding`, { method: 'POST', body: fd }).then(r => r.json());
+
   } else {
-    const res = await fetch(`${API}/api/generate`, {
+    // turn2law mode — plain JSON
+    const body = { doc_type: state.selectedDocType, fields: state.formData };
+    return fetch(`${API}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ doc_type: state.selectedDocType, fields: state.formData }),
-    });
-    return res.json();
+      body: JSON.stringify(body),
+    }).then(r => r.json());
   }
 }
 </script>
@@ -2002,7 +2208,9 @@ async function callGenerateAPI() {
 function loadPdfPreview() {
   if (!state.pdfUrl) return;
   const frame = document.getElementById('pdfFrame');
-  frame.src = `${API}${state.pdfUrl}`;
+  // Clear first so browsers don't flash the previous document
+  frame.removeAttribute('src');
+  requestAnimationFrame(() => { frame.src = `${API}${state.pdfUrl}`; });
 }
 
 function openPdfTab() {
@@ -2051,7 +2259,7 @@ function handleCertFile(file) {
   zone.addEventListener('drop', e => {
     e.preventDefault(); zone.classList.remove('drag-over');
     const f = e.dataTransfer.files[0];
-    if (f) { document.getElementById('certFileInput').files; handleCertFile(f); }
+    if (f) handleCertFile(f);
   });
 })();
 
@@ -2087,21 +2295,21 @@ async function validateCert() {
       state.certValidated = true;
       result.className = 'cert-validation-result valid show';
       result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span>✓ Certificate Valid — CN: <strong>${data.subject}</strong>, expires <strong>${data.expires}</strong></span>`;
+        <span>✓ Certificate Valid — CN: <strong>${_escHtml(data.subject)}</strong>, expires <strong>${_escHtml(data.expires)}</strong></span>`;
       document.getElementById('applySignBtn').disabled = false;
       showToast('Certificate validated.', 'success');
     } else {
       state.certValidated = false;
       result.className = 'cert-validation-result invalid show';
       result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-        <span>${data.error || 'Certificate validation failed'}</span>`;
+        <span>${_escHtml(data.error || 'Certificate validation failed')}</span>`;
       showToast('Certificate invalid: ' + (data.error || 'unknown error'), 'error');
     }
   } catch(e) {
     btn.disabled = false;
     btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Validate Certificate`;
     result.className = 'cert-validation-result invalid show';
-    result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${e.message}`;
+    result.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ${_escHtml(e.message)}`;
     showToast('Validation error: ' + e.message, 'error');
   }
 }
@@ -2205,53 +2413,96 @@ function resetApp() {
     currentStep: 1, selectedDocType: null, selectedDocMeta: null,
     inputMethod: 'form', formData: {}, schemaRequired: [], schemaOptional: [],
     brandingMode: 'turn2law', brandAssets: {}, brandProfileId: null, brandProfileName: null,
-    letterheadFile: null,
+    letterheadFile: null, companyProfile: {}, signatureFile: null,
     docId: null, pdfUrl: null, signedPdfUrl: null, signerName: null,
     certFile: null, certValidated: false, generatedAt: null,
   });
-  // Reset form UI
+
+  // Form UI
   document.getElementById('formContainer').innerHTML = '';
   document.getElementById('reviewContent').innerHTML = '';
   document.getElementById('genError').style.display = 'none';
   document.getElementById('draftNotice').style.display = 'none';
   document.getElementById('step1Next').disabled = true;
   document.querySelectorAll('.doc-card').forEach(c => { c.classList.remove('selected'); c.setAttribute('aria-checked','false'); });
-  // Reset signature form
+
+  // Signature step
   ['signerName','certPassword','signReason','signLocation','signerEmail'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
-  document.getElementById('certFileLabel').innerHTML = `Drop .pfx or .p12 certificate, or <span style="color:var(--gold-deep);font-weight:600">browse</span>`;
-  document.getElementById('certValidationResult').className = 'cert-validation-result';
-  document.getElementById('certValidationResult').innerHTML = '';
-  document.getElementById('applySignBtn').disabled = true;
-  document.getElementById('signSuccessBanner').classList.remove('show');
-  document.getElementById('dlSignedBtn').disabled = true;
-  document.getElementById('dlSignedBadge').style.display = 'none';
-  document.getElementById('metaSig').textContent = 'Unsigned';
-  // Reset branding
+  const certLabel = document.getElementById('certFileLabel');
+  if (certLabel) certLabel.innerHTML = `Drop .pfx or .p12 certificate, or <span style="color:var(--gold-deep);font-weight:600">browse</span>`;
+  const cvr = document.getElementById('certValidationResult');
+  if (cvr) { cvr.className = 'cert-validation-result'; cvr.innerHTML = ''; }
+  const asb = document.getElementById('applySignBtn');
+  if (asb) asb.disabled = true;
+  const ssb = document.getElementById('signSuccessBanner');
+  if (ssb) ssb.classList.remove('show');
+  const certInput = document.getElementById('certFileInput');
+  if (certInput) certInput.value = '';
+
+  // Download step
+  const dlsb = document.getElementById('dlSignedBtn'); if (dlsb) dlsb.disabled = true;
+  const dlbadge = document.getElementById('dlSignedBadge'); if (dlbadge) dlbadge.style.display = 'none';
+  const metaSig = document.getElementById('metaSig'); if (metaSig) metaSig.textContent = 'Unsigned';
+  const dlCard = document.getElementById('dlSignedCard'); if (dlCard) dlCard.classList.remove('signed');
+
+  // Branding — reset radio and sections
   selectBranding('turn2law');
+
+  // Advanced custom branding fields
+  ['brandCompanyName','brandProfileId','brandSignatoryName','brandDesignation',
+   'brandAddress','brandEmail','brandPhone'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
   ['header','footer','watermark','logo'].forEach(k => {
     const prev = document.getElementById('assetPreview-' + k);
-    const ph = document.getElementById('assetPlaceholder-' + k);
+    const ph   = document.getElementById('assetPlaceholder-' + k);
+    const inp  = document.getElementById('assetInput-' + k);
     if (prev) prev.style.display = 'none';
-    if (ph) ph.style.display = 'flex';
+    if (ph)   ph.style.display   = 'flex';
+    if (inp)  inp.value          = '';
   });
-  document.getElementById('brandCompanyName').value = '';
-  document.getElementById('brandProfileId').value = '';
-  // Reset letterhead
-  document.getElementById('lhFileInput').value = '';
-  document.getElementById('lhCompanyName').value = '';
-  document.getElementById('lhProfileId').value = '';
-  document.getElementById('lhPreviewWrap').style.display = 'none';
-  document.getElementById('lhPlaceholder').style.display = 'block';
-  document.getElementById('lhValidationMsg').style.display = 'none';
-  document.getElementById('lhDetectedInfo').style.display = 'none';
+  // Reset custom sig preview
+  const bsp = document.getElementById('brandSigPreview');
+  const bsph = document.getElementById('brandSigPlaceholder');
+  if (bsp)  { bsp.style.display = 'none'; bsp.innerHTML = ''; }
+  if (bsph)  bsph.style.display = 'flex';
+  const bsi = document.getElementById('brandSigInput'); if (bsi) bsi.value = '';
+
+  // Letterhead fields
+  ['lhCompanyName','lhProfileId','lhSignatoryName','lhDesignation',
+   'lhAddress','lhEmail','lhPhone'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const lhfi = document.getElementById('lhFileInput'); if (lhfi) lhfi.value = '';
+  const lhpw = document.getElementById('lhPreviewWrap'); if (lhpw) lhpw.style.display = 'none';
+  const lhpl = document.getElementById('lhPlaceholder');  if (lhpl) lhpl.style.display = 'block';
+  const lhvm = document.getElementById('lhValidationMsg'); if (lhvm) lhvm.style.display = 'none';
+  const lhdi = document.getElementById('lhDetectedInfo');  if (lhdi) lhdi.style.display = 'none';
+  // Reset lh sig preview
+  const lsp  = document.getElementById('lhSigPreview');
+  const lsph = document.getElementById('lhSigPlaceholder');
+  if (lsp)  { lsp.style.display = 'none'; lsp.innerHTML = ''; }
+  if (lsph)  lsph.style.display = 'flex';
+  const lsi = document.getElementById('lhSigInput'); if (lsi) lsi.value = '';
+
+  // PDF preview iframe
+  const pdfFrame = document.getElementById('pdfFrame');
+  if (pdfFrame) pdfFrame.removeAttribute('src');
+
   goToStep(1);
 }
 
 /* ============================================================
    TOAST SYSTEM
    ============================================================ */
+function _escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 function showToast(msg, type = 'info') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
@@ -2263,12 +2514,12 @@ function showToast(msg, type = 'info') {
     info:    `<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/></svg>`,
   };
   toast.innerHTML = `${icons[type] || icons.info}
-    <span class="toast-msg">${msg}</span>
+    <span class="toast-msg">${_escHtml(msg)}</span>
     <button class="toast-close" onclick="removeToast(this.parentElement)" aria-label="Dismiss notification">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>`;
   container.appendChild(toast);
-  setTimeout(() => removeToast(toast), 3000);
+  setTimeout(() => removeToast(toast), 4000);
 }
 
 function removeToast(toast) {
@@ -2281,7 +2532,6 @@ function removeToast(toast) {
    NAV — scroll & mobile menu
    ============================================================ */
 const nav = document.getElementById('nav');
-const pb = document.getElementById('progressBar');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 10);
 }, { passive: true });
