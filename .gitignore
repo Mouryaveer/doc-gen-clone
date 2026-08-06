@@ -61,3 +61,6 @@ docgen/sample.pdf
 
 # pytest
 .pytest_cache/
+
+.kiro
+
